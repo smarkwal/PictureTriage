@@ -1,0 +1,12 @@
+# Visual Studio
+.vscode
+
+# Gradle
+.gradle
+
+# build output
+bin
+build
+
+# MacOS
+.DS_Store
