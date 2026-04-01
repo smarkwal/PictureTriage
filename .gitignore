@@ -1,12 +1,15 @@
 # Visual Studio
-.vscode
+/.vscode
 
 # Gradle
-.gradle
+/.gradle
 
 # build output
-bin
-build
+/bin
+/build
 
 # MacOS
 .DS_Store
+
+# test files
+/test
