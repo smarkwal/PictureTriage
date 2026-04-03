@@ -1,8 +1,5 @@
 package net.markwalder.picturetriage.service;
 
-import net.markwalder.picturetriage.domain.ImageItem;
-import net.markwalder.picturetriage.domain.Phase2Progress;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -10,6 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import net.markwalder.picturetriage.domain.ImageItem;
+import net.markwalder.picturetriage.domain.Phase2Progress;
 
 public class QuicksortInteractiveRanker {
     private final Deque<IntRange> stack = new ArrayDeque<>();

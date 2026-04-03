@@ -1,11 +1,11 @@
 package net.markwalder.picturetriage.ui;
 
+import java.util.function.Function;
+import java.util.function.IntPredicate;
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-
-import java.util.function.Function;
-import java.util.function.IntPredicate;
 
 /**
  * A generic, reusable block-based progress bar component.

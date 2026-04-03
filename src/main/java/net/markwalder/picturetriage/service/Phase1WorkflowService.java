@@ -1,13 +1,13 @@
 package net.markwalder.picturetriage.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.domain.Phase1Decision;
 import net.markwalder.picturetriage.domain.Phase1Progress;
 import net.markwalder.picturetriage.domain.ResultBundle;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class Phase1WorkflowService {
     private final List<ImageItem> images;
