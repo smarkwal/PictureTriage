@@ -33,7 +33,8 @@ javafx {
 }
 
 dependencies {
-    implementation("com.github.usefulness:webp-imageio:0.10.0")
+    // TwelveMonkeys ImageIO WebP plugin: Pure Java implementation for reading WebP images.
+    implementation("com.twelvemonkeys.imageio:imageio-webp:3.13.1")
 }
 
 application {
