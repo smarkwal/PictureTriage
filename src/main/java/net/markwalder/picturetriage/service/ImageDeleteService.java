@@ -1,14 +1,14 @@
 package net.markwalder.picturetriage.service;
 
-import net.markwalder.picturetriage.domain.ImageItem;
-import net.markwalder.picturetriage.util.StringUtils;
-
 import java.awt.Desktop;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.markwalder.picturetriage.domain.ImageItem;
+import net.markwalder.picturetriage.util.StringUtils;
 
 /**
  * Service for safely removing image files from disk.
@@ -70,7 +70,7 @@ public class ImageDeleteService {
                         deletedCount++;
                     } else {
                         failedDeletions.add(new DeleteResult.FailedDeletion(path,
-                                "Could not move image to OS trash."));
+                                "Could not move image to trash."));
                     }
                 } catch (RuntimeException e) {
                     String reason = formatReason(e);
