@@ -29,6 +29,7 @@ import javafx.scene.paint.Color;
  */
 public class BlockProgressBar extends HBox {
     private static final int MAX_BLOCK_SIZE = 20;
+    private static final int BLOCK_HEIGHT = 20;
     private static final int BLOCK_SPACING = 1;
     private static final int HIGHLIGHT_BORDER_WIDTH = 2;
     private static final int MARGIN = 10;
@@ -112,28 +113,28 @@ public class BlockProgressBar extends HBox {
         double availableWidth = width - 2 * MARGIN;
         double blockSize = Math.min(MAX_BLOCK_SIZE, availableWidth / totalBlocks);
         double offsetX = MARGIN;
+        double blockY = (height - BLOCK_HEIGHT) / 2.0;
 
         // Draw each block
         for (int blockIdx = 0; blockIdx < totalBlocks; blockIdx++) {
             double x = offsetX + blockIdx * (blockSize + BLOCK_SPACING);
-            double y = (height - blockSize) / 2.0;
 
             // Draw block background
             Color blockColor = colorProvider.apply(blockIdx);
             gc.setFill(blockColor);
-            gc.fillRect(x, y, blockSize, blockSize);
+            gc.fillRect(x, blockY, blockSize, BLOCK_HEIGHT);
 
             // Draw block border
             gc.setStroke(BLOCK_BORDER_COLOR);
             gc.setLineWidth(1);
-            gc.strokeRect(x, y, blockSize, blockSize);
+            gc.strokeRect(x, blockY, blockSize, BLOCK_HEIGHT);
 
             // Draw highlight border if needed
             if (isHighlighted.test(blockIdx)) {
                 gc.setStroke(HIGHLIGHT_BORDER_COLOR);
                 gc.setLineWidth(HIGHLIGHT_BORDER_WIDTH);
                 double inset = HIGHLIGHT_BORDER_WIDTH / 2.0;
-                gc.strokeRect(x + inset, y + inset, blockSize - HIGHLIGHT_BORDER_WIDTH, blockSize - HIGHLIGHT_BORDER_WIDTH);
+                gc.strokeRect(x + inset, blockY + inset, blockSize - HIGHLIGHT_BORDER_WIDTH, BLOCK_HEIGHT - HIGHLIGHT_BORDER_WIDTH);
             }
         }
     }
