@@ -3,6 +3,26 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    // Emit Java 25 bytecode regardless of host JDK defaults.
+    options.release.set(25)
+}
+
+tasks.withType<JavaExec>().configureEach {
+    // Ensure 'run' also launches with Java 25.
+    javaLauncher.set(
+        javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(25))
+        }
+    )
+}
+
 repositories {
     mavenCentral()
 }
