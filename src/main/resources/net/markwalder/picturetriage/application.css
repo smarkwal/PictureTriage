@@ -99,6 +99,7 @@
    ============================================================================ */
 
 .thumbnail-button {
+    -fx-padding: 2px;
     -fx-cursor: hand;
 }
 
@@ -112,6 +113,11 @@
     -fx-border-color: -fx-color-delete;
     -fx-border-width: -fx-size-thumbnail-border;
     -fx-border-radius: 4;
+}
+
+/* When a thumbnail has keyboard focus, reduce padding so border appears to grow inward */
+.thumbnail-button-focused {
+    -fx-padding: 0px;
 }
 
 .thumbnail-image-placeholder {

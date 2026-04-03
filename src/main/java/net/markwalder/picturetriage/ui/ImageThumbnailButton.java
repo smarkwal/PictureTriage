@@ -23,7 +23,10 @@ import java.util.function.BiConsumer;
  */
 public class ImageThumbnailButton extends StackPane {
     private static final double THUMBNAIL_SIZE = 200.0;
-    private static final double BORDER_WIDTH = 4.0;
+    private static final double BASE_BORDER_WIDTH = 4.0;
+    private static final double FOCUSED_BORDER_WIDTH = 6.0;
+    // Keep total inset constant to avoid layout jitter when focus changes.
+    private static final double TOTAL_INSET = 8.0;
 
     private final ImageItem imageItem;
     private final ImageCache imageCache;
@@ -39,16 +42,19 @@ public class ImageThumbnailButton extends StackPane {
 
         // Create image view
         this.imageView = new ImageView();
-        imageView.setFitWidth(THUMBNAIL_SIZE);
-        imageView.setFitHeight(THUMBNAIL_SIZE);
+        double imageSize = THUMBNAIL_SIZE - (2 * TOTAL_INSET);
+        imageView.setFitWidth(imageSize);
+        imageView.setFitHeight(imageSize);
         imageView.setPreserveRatio(true);
 
         // Load image
         loadImage();
 
         // Setup layout
+        // Fixed size to prevent jittering when border changes
         setPrefSize(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
-        setPadding(new Insets(4));
+        setMinSize(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+        setMaxSize(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
         getChildren().add(imageView);
         getStyleClass().add("thumbnail-button");
 
@@ -105,9 +111,9 @@ public class ImageThumbnailButton extends StackPane {
                 ? Color.web("#2e9f44")  // Green (KEEP)
                 : Color.web("#bf2f2f");  // Red (DELETE)
 
-        // Use thicker border when focused (visual indicator)
-        double borderWidth = hasFocusIndicator ? 6.0 : BORDER_WIDTH;
-        
+        double borderWidth = hasFocusIndicator ? FOCUSED_BORDER_WIDTH : BASE_BORDER_WIDTH;
+        double padding = TOTAL_INSET - borderWidth;
+
         BorderStroke stroke = new BorderStroke(
                 borderColor,
                 javafx.scene.layout.BorderStrokeStyle.SOLID,
@@ -115,11 +121,12 @@ public class ImageThumbnailButton extends StackPane {
                 new BorderWidths(borderWidth)
         );
         setBorder(new Border(stroke));
+        setPadding(new Insets(padding));
     }
     
     /**
      * Set the keyboard focus indicator (visual highlight).
-     * When true, the border becomes thicker to show this thumbnail is focused.
+        * When true, border becomes thicker while padding is reduced to keep outer size stable.
      * 
      * @param focused true to show focus, false to hide
      */
