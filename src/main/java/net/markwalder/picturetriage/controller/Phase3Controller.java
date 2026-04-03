@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import javafx.application.Platform;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -65,11 +63,6 @@ public class Phase3Controller {
         Phase3GridPane gridPane = new Phase3GridPane(imageCache);
         gridPane.populate(phase3Service.snapshot());
 
-        Label progressLabel = new Label();
-        progressLabel.getStyleClass().add("label-body");
-        progressLabel.getStyleClass().add("label-centered");
-        updatePhase3ProgressLabel(progressLabel);
-
         BlockProgressBar phase3MiniMap = new BlockProgressBar(phase3Service.getTotalImages(), 1000, 24);
         updatePhase3MiniMap(phase3MiniMap, gridPane.getCurrentFocusIndex());
 
@@ -92,12 +85,11 @@ public class Phase3Controller {
 
         gridPane.setOnImageDecisionChanged((image, newDecision) -> {
             phase3Service.toggleDecision(image);
-            updatePhase3ProgressLabel(progressLabel);
             updatePhase3MiniMap(phase3MiniMap, gridPane.getCurrentFocusIndex());
             updateFinishButtonState(finishButton);
         });
 
-        VBox content = new VBox(10, gridPane, phase3MiniMap, progressLabel);
+        VBox content = new VBox(10, gridPane, phase3MiniMap);
         VBox.setVgrow(gridPane, Priority.ALWAYS);
 
         PhaseLayoutContainer root = new PhaseLayoutContainer(
@@ -131,17 +123,6 @@ public class Phase3Controller {
         });
     }
 
-    private void updatePhase3ProgressLabel(Label label) {
-        var progress = phase3Service.snapshot().progress();
-        label.setText(String.format(
-            "Keep: %d | Delete: %d | Total: %d",
-            progress.keepCount(),
-            progress.deleteCount(),
-            progress.totalImages()
-        ));
-        label.setAlignment(Pos.CENTER);
-    }
-
     private void updatePhase3MiniMap(BlockProgressBar miniMap, int selectedIndex) {
         var snapshot = phase3Service.snapshot();
         var orderedImages = snapshot.imageDisplayOrder();
@@ -163,6 +144,6 @@ public class Phase3Controller {
     }
 
     private void updateFinishButtonState(Button finishButton) {
-        finishButton.setDisable(phase3Service.snapshot().progress().deleteCount() == 0);
+        finishButton.setDisable(!phase3Service.hasImagesToDelete());
     }
 }

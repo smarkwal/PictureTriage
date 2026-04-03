@@ -8,7 +8,6 @@ import java.util.Map;
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.domain.Phase3Decision;
 import net.markwalder.picturetriage.domain.Phase3GridState;
-import net.markwalder.picturetriage.domain.Phase3Progress;
 
 /**
  * Manages the Phase 3 workflow: final review and decision toggle for all images.
@@ -71,20 +70,12 @@ public class Phase3WorkflowService {
     /**
      * Return an immutable snapshot of the current grid state.
      * 
-     * @return Phase3GridState with display order, decisions, and progress
+         * @return Phase3GridState with display order and decisions
      */
     public Phase3GridState snapshot() {
-        int totalImages = displayOrder.size();
-        int keepCount = (int) decisions.values().stream()
-                .filter(d -> d == Phase3Decision.KEEP)
-                .count();
-        int deleteCount = totalImages - keepCount;
-
-        Phase3Progress progress = new Phase3Progress(totalImages, keepCount, deleteCount);
         return new Phase3GridState(
                 new ArrayList<>(displayOrder),
-                new HashMap<>(decisions),
-                progress
+            new HashMap<>(decisions)
         );
     }
 
@@ -97,6 +88,10 @@ public class Phase3WorkflowService {
         return displayOrder.stream()
                 .filter(image -> decisions.get(image) == Phase3Decision.DELETE)
                 .toList();
+    }
+
+    public boolean hasImagesToDelete() {
+        return decisions.values().stream().anyMatch(decision -> decision == Phase3Decision.DELETE);
     }
 
     /**

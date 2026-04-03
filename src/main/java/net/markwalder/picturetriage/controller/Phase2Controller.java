@@ -155,8 +155,6 @@ public class Phase2Controller {
         ImageDisplayPane rightPane,
         QuicksortProgressPane progressPane
     ) {
-        progressPane.update(ranker.progress());
-
         int keptCount = phase1Result.keptImages().size();
         int triageCount = phase1Result.rankedTriageImages().size();
         int deletedCount = phase1Result.deletedImages().size();

@@ -68,11 +68,6 @@ public class Phase1Controller {
         indexLabel.setAlignment(Pos.CENTER);
         indexLabel.getStyleClass().add("label-body");
 
-        Label countsLabel = new Label();
-        countsLabel.setMaxWidth(Double.MAX_VALUE);
-        countsLabel.setAlignment(Pos.CENTER);
-        countsLabel.getStyleClass().add("label-body");
-
         ImageDisplayPane imagePane = new ImageDisplayPane(1000, 560, imageCache, selectedRootFolder);
 
         BlockProgressBar blockProgressBar = new BlockProgressBar(phase1Service.total(), 1000, 24);
@@ -81,7 +76,7 @@ public class Phase1Controller {
         HBox progressBarRow = new HBox(blockProgressBar);
         progressBarRow.setAlignment(Pos.CENTER);
 
-        VBox content = new VBox(10, indexLabel, imagePane, progressBarRow, countsLabel);
+        VBox content = new VBox(10, indexLabel, imagePane, progressBarRow);
         content.setAlignment(Pos.TOP_CENTER);
 
         Button restartButton = new Button("Restart");
@@ -96,28 +91,28 @@ public class Phase1Controller {
         keepButton.getStyleClass().add("button-keep");
         keepButton.setOnAction(e -> {
             phase1Service.applyDecision(Phase1Decision.KEEP);
-            refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
+            refreshPhase1View(imagePane, indexLabel, blockProgressBar);
         });
 
         Button triageButton = new Button("Triage");
         triageButton.getStyleClass().add("button-triage");
         triageButton.setOnAction(e -> {
             phase1Service.applyDecision(Phase1Decision.TRIAGE);
-            refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
+            refreshPhase1View(imagePane, indexLabel, blockProgressBar);
         });
 
         Button deleteButton = new Button("Delete");
         deleteButton.getStyleClass().add("button-delete");
         deleteButton.setOnAction(e -> {
             phase1Service.applyDecision(Phase1Decision.DELETE);
-            refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
+            refreshPhase1View(imagePane, indexLabel, blockProgressBar);
         });
 
         Button nextButton = new Button("Next");
         nextButton.getStyleClass().add("button-primary");
         nextButton.setOnAction(e -> {
             phase1Service.triageRemaining();
-            refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
+            refreshPhase1View(imagePane, indexLabel, blockProgressBar);
         });
 
         PhaseLayoutContainer root = new PhaseLayoutContainer(
@@ -140,21 +135,19 @@ public class Phase1Controller {
                     return;
                 }
             }
-            refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
+            refreshPhase1View(imagePane, indexLabel, blockProgressBar);
             event.consume();
         });
 
         stage.setScene(scene);
-        refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
+        refreshPhase1View(imagePane, indexLabel, blockProgressBar);
     }
 
     private void refreshPhase1View(
         ImageDisplayPane imagePane,
         Label indexLabel,
-        Label countsLabel,
         BlockProgressBar blockProgressBar
     ) {
-        var progress = phase1Service.progress();
         blockProgressBar.update(
             blockIndex -> {
                 Phase1Decision decision = phase1Service.getDecisionAtIndex(blockIndex);
@@ -169,14 +162,6 @@ public class Phase1Controller {
             },
             blockIndex -> blockIndex == phase1Service.index()
         );
-        countsLabel.setText(String.format(
-            "Reviewed: %d/%d | Keep: %d | Triage: %d | Delete: %d",
-            progress.reviewedCount(),
-            progress.totalImages(),
-            progress.keepCount(),
-            progress.triageCount(),
-            progress.deleteCount()
-        ));
 
         if (phase1Service.isComplete()) {
             if (onCompleted != null) {

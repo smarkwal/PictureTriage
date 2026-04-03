@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import net.markwalder.picturetriage.domain.ImageItem;
-import net.markwalder.picturetriage.domain.Phase2Progress;
 
 public class QuicksortInteractiveRanker {
     private final Deque<IntRange> stack = new ArrayDeque<>();
@@ -17,9 +16,6 @@ public class QuicksortInteractiveRanker {
     private final Set<IntRange> completedRanges = new HashSet<>();
 
     private ComparisonPair currentPair;
-    private int comparisonsCompleted;
-    private int finishedRanges;
-    private int estimatedComparisons;
 
     private int lo;
     private int hi;
@@ -33,11 +29,8 @@ public class QuicksortInteractiveRanker {
         stack.clear();
         completedRanges.clear();
         currentPair = null;
-        comparisonsCompleted = 0;
-        finishedRanges = 0;
         partitionActive = false;
 
-        estimatedComparisons = estimate(items.size());
         if (items.size() > 1) {
             stack.push(new IntRange(0, items.size() - 1));
         }
@@ -58,14 +51,12 @@ public class QuicksortInteractiveRanker {
             i++;
             swap(i, j);
         }
-        comparisonsCompleted++;
         j++;
 
         if (j >= hi) {
             int pivotIndex = i + 1;
             swap(pivotIndex, hi);
             partitionActive = false;
-            finishedRanges++;
             completedRanges.add(new IntRange(pivotIndex, pivotIndex));
 
             int leftLo = lo;
@@ -98,17 +89,6 @@ public class QuicksortInteractiveRanker {
         return List.copyOf(items);
     }
 
-    public Phase2Progress progress() {
-        return new Phase2Progress(
-            items.size(),
-            comparisonsCompleted,
-            estimatedComparisons,
-            stack.size() + (partitionActive ? 1 : 0),
-            finishedRanges,
-            isComplete()
-        );
-    }
-
     private void advanceToNextPair() {
         while (true) {
             if (partitionActive) {
@@ -129,7 +109,6 @@ public class QuicksortInteractiveRanker {
             if (range.lo() >= range.hi()) {
                 // Range is invalid or single element - mark as complete
                 completedRanges.add(new IntRange(range.lo(), range.lo()));
-                finishedRanges++;
                 continue;
             }
 
@@ -148,16 +127,7 @@ public class QuicksortInteractiveRanker {
             if (nextLo == nextHi) {
                 completedRanges.add(new IntRange(nextLo, nextHi));
             }
-            finishedRanges++;
         }
-    }
-
-    private int estimate(int n) {
-        if (n <= 1) {
-            return 0;
-        }
-        double log2 = Math.log(n) / Math.log(2);
-        return Math.max(1, (int) Math.round(n * log2));
     }
 
     private void swap(int left, int right) {

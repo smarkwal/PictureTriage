@@ -6,7 +6,6 @@ import java.util.List;
 
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.domain.Phase1Decision;
-import net.markwalder.picturetriage.domain.Phase1Progress;
 import net.markwalder.picturetriage.domain.ResultBundle;
 
 public class Phase1WorkflowService {
@@ -14,16 +13,15 @@ public class Phase1WorkflowService {
     private final List<ImageItem> kept = new ArrayList<>();
     private final List<ImageItem> triage = new ArrayList<>();
     private final List<ImageItem> deleted = new ArrayList<>();
+    private final List<Phase1Decision> decisionTimeline = new ArrayList<>();
 
     private int index;
-    private Phase1Progress progress;
 
     public Phase1WorkflowService(List<ImageItem> images) {
         List<ImageItem> shuffled = new ArrayList<>(images);
         Collections.shuffle(shuffled);
         this.images = List.copyOf(shuffled);
         this.index = 0;
-        this.progress = Phase1Progress.empty(images.size());
     }
 
     public ImageItem currentImage() {
@@ -44,7 +42,7 @@ public class Phase1WorkflowService {
             case TRIAGE -> triage.add(image);
             case DELETE -> deleted.add(image);
         }
-        progress = progress.withDecision(decision);
+        decisionTimeline.add(decision);
         index++;
     }
 
@@ -56,10 +54,6 @@ public class Phase1WorkflowService {
 
     public boolean isComplete() {
         return index >= images.size();
-    }
-
-    public Phase1Progress progress() {
-        return progress;
     }
 
     public int index() {
@@ -80,9 +74,8 @@ public class Phase1WorkflowService {
      * @return the Phase1Decision if decided, or null if not yet decided
      */
     public Phase1Decision getDecisionAtIndex(int blockIndex) {
-        List<Phase1Decision> timeline = progress.decisionTimeline();
-        if (blockIndex >= 0 && blockIndex < timeline.size()) {
-            return timeline.get(blockIndex);
+        if (blockIndex >= 0 && blockIndex < decisionTimeline.size()) {
+            return decisionTimeline.get(blockIndex);
         }
         return null;  // Not yet decided
     }

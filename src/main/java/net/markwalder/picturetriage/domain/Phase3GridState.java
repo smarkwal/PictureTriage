@@ -10,13 +10,14 @@ import java.util.Map;
  */
 public record Phase3GridState(
     List<ImageItem> imageDisplayOrder,
-    Map<ImageItem, Phase3Decision> decisions,
-    Phase3Progress progress
+    Map<ImageItem, Phase3Decision> decisions
 ) {
     public Phase3GridState {
-        if (imageDisplayOrder == null || decisions == null || progress == null) {
+        if (imageDisplayOrder == null || decisions == null) {
             throw new IllegalArgumentException("All fields must be non-null");
         }
+        imageDisplayOrder = List.copyOf(imageDisplayOrder);
+        decisions = Map.copyOf(decisions);
         // Verify decisions map covers all images
         if (!decisions.keySet().containsAll(imageDisplayOrder)) {
             throw new IllegalArgumentException("Decisions map must contain an entry for each image");

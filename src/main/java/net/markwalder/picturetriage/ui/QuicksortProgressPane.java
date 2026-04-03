@@ -1,30 +1,17 @@
 package net.markwalder.picturetriage.ui;
 
 import javafx.geometry.Insets;
-import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import net.markwalder.picturetriage.domain.Phase2Progress;
 
 public class QuicksortProgressPane extends VBox {
-    private BlockProgressBar blockProgressBar;
-    private final Label label = new Label("0 / 0 comparisons");
+    private final BlockProgressBar blockProgressBar;
 
     public QuicksortProgressPane(int totalImages) {
         setSpacing(6);
         setPadding(new Insets(4, 0, 4, 0));
         this.blockProgressBar = new BlockProgressBar(totalImages, 1000, 24);
         blockProgressBar.setStyle("-fx-padding: 0;");
-        getChildren().addAll(blockProgressBar, label);
-    }
-
-    public void update(Phase2Progress progress) {
-        label.setText(String.format(
-            "Comparisons: %d / %d | Active ranges: %d | Finished ranges: %d",
-            progress.comparisonsCompleted(),
-            progress.estimatedComparisons(),
-            progress.activeRanges(),
-            progress.finishedRanges()
-        ));
+        getChildren().add(blockProgressBar);
     }
 
     /**
