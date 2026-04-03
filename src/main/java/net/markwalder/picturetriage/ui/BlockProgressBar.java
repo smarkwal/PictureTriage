@@ -109,32 +109,53 @@ public class BlockProgressBar extends HBox {
         gc.setFill(BACKGROUND_COLOR);
         gc.fillRect(0, 0, width, height);
 
-        // Calculate block size with scaling
         double availableWidth = width - 2 * MARGIN;
-        double blockSize = Math.min(MAX_BLOCK_SIZE, availableWidth / totalBlocks);
         double offsetX = MARGIN;
         double blockY = (height - BLOCK_HEIGHT) / 2.0;
 
+        drawBlockMode(gc, offsetX, blockY, availableWidth);
+    }
+
+    private void drawBlockMode(GraphicsContext gc, double offsetX, double blockY, double availableWidth) {
+        double blockSize = Math.min(MAX_BLOCK_SIZE, availableWidth / totalBlocks);
+        double gap = BLOCK_SPACING;
+
+        // If blocks are too small, remove gaps to prevent blocks from disappearing
+        if (blockSize < 1.0) {
+            blockSize = 1.0;
+            gap = 0;
+        }
+
+        // Calculate how to distribute blocks across the available width
+        // blockStepX is the distance between block starting positions
+        double blockStepX = (blockSize + gap);
+        // If blocks are too densely packed, compress them to fit within available width
+        if (blockStepX * totalBlocks > availableWidth) {
+            blockStepX = availableWidth / totalBlocks;
+        }
+
         // Draw each block
         for (int blockIdx = 0; blockIdx < totalBlocks; blockIdx++) {
-            double x = offsetX + blockIdx * (blockSize + BLOCK_SPACING);
+            double x = offsetX + blockIdx * blockStepX;
 
             // Draw block background
             Color blockColor = colorProvider.apply(blockIdx);
             gc.setFill(blockColor);
             gc.fillRect(x, blockY, blockSize, BLOCK_HEIGHT);
 
-            // Draw block border
-            gc.setStroke(BLOCK_BORDER_COLOR);
-            gc.setLineWidth(1);
-            gc.strokeRect(x, blockY, blockSize, BLOCK_HEIGHT);
+            // Only draw borders for blocks larger than 2px to keep them visible
+            if (blockSize > 2.0) {
+                gc.setStroke(BLOCK_BORDER_COLOR);
+                gc.setLineWidth(1);
+                gc.strokeRect(x, blockY, blockSize, BLOCK_HEIGHT);
 
-            // Draw highlight border if needed
-            if (isHighlighted.test(blockIdx)) {
-                gc.setStroke(HIGHLIGHT_BORDER_COLOR);
-                gc.setLineWidth(HIGHLIGHT_BORDER_WIDTH);
-                double inset = HIGHLIGHT_BORDER_WIDTH / 2.0;
-                gc.strokeRect(x + inset, blockY + inset, blockSize - HIGHLIGHT_BORDER_WIDTH, BLOCK_HEIGHT - HIGHLIGHT_BORDER_WIDTH);
+                // Draw highlight border if needed
+                if (isHighlighted.test(blockIdx)) {
+                    gc.setStroke(HIGHLIGHT_BORDER_COLOR);
+                    gc.setLineWidth(HIGHLIGHT_BORDER_WIDTH);
+                    double inset = HIGHLIGHT_BORDER_WIDTH / 2.0;
+                    gc.strokeRect(x + inset, blockY + inset, blockSize - HIGHLIGHT_BORDER_WIDTH, BLOCK_HEIGHT - HIGHLIGHT_BORDER_WIDTH);
+                }
             }
         }
     }
