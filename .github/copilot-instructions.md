@@ -41,6 +41,9 @@ The codebase is organized into four primary layers:
    - `Phase1Decision`: Enum with values KEEP, TRIAGE, DELETE
    - `Phase1Progress`: Tracks counts and decision timeline for phase 1
    - `Phase2Progress`: Tracks rankings and comparison progress for phase 2
+   - `Phase3Decision`: Enum with values KEEP, DELETE (final review decisions)
+   - `Phase3Progress`: Tracks keep/delete counts for phase 3
+   - `Phase3GridState`: Immutable snapshot of grid state with decisions map
    - `ResultBundle`: Final collected results (kept, triaged, deleted lists)
 
 3. **Service Layer** (`service/` package)
@@ -48,6 +51,8 @@ The codebase is organized into four primary layers:
    - `ImageScannerService`: Recursive folder scan, deterministic sort, unreadable-file tracking
    - `Phase1WorkflowService`: Manages cursor position and classification lists; emits phase 1 events
    - `QuicksortInteractiveRanker`: Interactive quicksort algorithm for phase 2
+   - `Phase3WorkflowService`: Manages final review decisions, toggles keep/delete state, provides final image lists
+   - `ImageDeleteService`: Safely deletes image files from disk with per-file error handling
    - `ComparisonChoice` (enum): LEFT_BETTER, RIGHT_BETTER
    - `ComparisonPair`: Record representing left/right image comparison
    - `ResultsPrinter`: Formats and outputs final results
@@ -56,19 +61,23 @@ The codebase is organized into four primary layers:
    - `AppCoordinator`: Central state machine; orchestrates scene transitions and workflow
    - `QuicksortProgressPane`: Displays phase 2 comparison UI
    - `SegmentedProgressBar`: Visual progress bar with color segments per decision
+   - `Phase3GridPane`: 4-column grid layout for phase 3 image thumbnails
+   - `ImageThumbnailButton`: Clickable 200×200px thumbnail with green/red border per decision
+   - `DeleteConfirmationDialog`: Simple modal dialogs for deletion confirmation and results
 
 ### Workflow Flow
 
 The application follows a rigid, sequential phase flow:
 
 ```
-Folder Selection → Phase 1 Triage → Phase 2 Ranking → Results Display
+Folder Selection → Phase 1 Triage → Phase 2 Ranking → Phase 3 Final Review → Results Display
 ```
 
 1. **Folder Selection**: User selects a directory via native file chooser
 2. **Phase 1**: User categorizes each image (Keep/Triage/Delete) sequentially
-3. **Phase 2**: User ranks triaged images via interactive pairwise comparisons
-4. **Results**: Final organized results displayed and optionally exported
+3. **Phase 2**: User ranks triaged images via interactive pairwise comparisons (only if triaged list non-empty)
+4. **Phase 3**: User performs final review in grid layout; toggles keep/delete state per image; deletes marked files
+5. **Results**: Final organized results displayed with deletion summary
 
 ### Key Design Principles
 
@@ -129,6 +138,32 @@ Folder Selection → Phase 1 Triage → Phase 2 Ranking → Results Display
   - `activeRanges` and `finishedRanges`: range partition counts
 - Extend fields or introduce `Phase2ProgressEstimator` service for detailed estimates
 
+### Phase 3 Implementation Details
+
+**Grid Layout**: 4-column fixed layout, 200×200px thumbnails with 10px gap
+- Uses `GridPane` wrapped in `ScrollPane` for vertical scrolling
+- Images concatenated in order: kept (from phase 1) + triaged (sorted from phase 2) + deleted (from phase 1)
+- Initial state: kept/triaged images show green border (KEEP), deleted images show red border (DELETE)
+
+**User Interaction**:
+- Click any thumbnail to toggle border color and decision state
+- Progress label shows keep/delete tallies in real-time
+- "Finish & Delete" button shows confirmation dialog, performs file deletion, displays results
+- "Cancel" button returns to folder selection
+
+**Deletion Flow**:
+1. User clicks "Finish & Delete"
+2. Simple confirmation dialog shows count of images to delete
+3. If confirmed: `ImageDeleteService` deletes files (per-file error handling)
+4. Results dialog shows deletion summary (count of successful/failed deletions)
+5. Results page displays with deletion feedback showing in text area
+
+**File Deletion Strategy**:
+- `ImageDeleteService.deleteFiles()` performs immediate file-system deletion
+- Per-file error handling: accumulates failures, continues with remaining files
+- `DeleteResult` record tracks deletion count, failure count, and list of failed paths with reasons
+- Errors are surfaced to user in results dialog
+
 ## Future Planned Refactoring
 
 From `plan.md`:
@@ -137,11 +172,12 @@ From `plan.md`:
    - `FolderSelectionController`
    - `Phase1Controller`
    - `Phase2Controller`
+   - `Phase3Controller`
    - `ResultsController`
 
 2. **Event Architecture Formalization**:
    - Extract `DomainEvent` interface (marker interface)
-   - Extract event payload records (e.g., `FolderScanCompletedEvent`, `Phase1CompletedEvent`, `Phase2CompletedEvent`)
+   - Extract event payload records (e.g., `FolderScanCompletedEvent`, `Phase1CompletedEvent`, `Phase2CompletedEvent`, `Phase3CompletedEvent`)
    - Implement explicit `EventPublisher` and `EventSubscriber` interfaces
    - Wire event bus across services and controllers
 
@@ -151,10 +187,18 @@ From `plan.md`:
    - `ImageScannerService` (folder scanning correctness)
    - `Phase1WorkflowService` (decision logic and progress)
    - `QuicksortInteractiveRanker` (quicksort progress monotonicity)
+   - `Phase3WorkflowService` (decision toggle and list filtering)
+   - `ImageDeleteService` (file deletion and error handling)
 
 5. **Error Handling**: Add graceful decode-failure rendering for corrupted/unsupported images
 
 6. **Performance**: Optional image prefetching to reduce UI blocking during display
+
+7. **Phase 3 Enhancements**:
+   - Keyboard navigation (arrow keys to move, Space to toggle)
+   - Undo capability for individual decisions
+   - Batch decision operations (select multiple images, apply same decision)
+   - Sort/filter options (e.g., by filename, file size, date modified)
 
 ## Common Gradle Tasks
 

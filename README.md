@@ -6,9 +6,11 @@ A desktop application for organizing and ranking pictures through an interactive
 
 - **Phase 1 - Initial Triage**: Quickly categorize images into three buckets: Keep, Triage, or Delete
 - **Phase 2 - Interactive Ranking**: Use an interactive quicksort algorithm to rank triaged images by preference
+- **Phase 3 - Final Review**: Browse all images in a grid layout and make final keep/delete decisions
+- **File Deletion**: Safely delete marked images from disk with per-file error handling and confirmation
 - **Multi-Format Support**: Handles standard image formats plus WebP through the TwelveMonkeys ImageIO library
-- **Progress Tracking**: Visual progress indicators for both phases of the workflow
-- **Results Management**: View final organized results and results summary
+- **Progress Tracking**: Visual progress indicators throughout the workflow
+- **Results Management**: View final organized results with deletion summary
 
 ## Architecture
 
@@ -23,7 +25,8 @@ The application flows through:
 1. **Folder Selection** → Scan and load images from a selected directory
 2. **Phase 1 Workflow** → Categorize each image (Keep/Triage/Delete)
 3. **Phase 2 Workflow** → Rank triaged images using interactive quicksort
-4. **Results** → View organized images and workflow summary
+4. **Phase 3 Workflow** → Review all images in grid layout; toggle keep/delete decisions; delete marked files
+5. **Results** → View organized images and deletion summary
 
 ## Requirements
 
@@ -72,18 +75,25 @@ src/main/java/net/markwalder/picturetriage/
 │   ├── Phase1Decision.java          # Triage decision enum
 │   ├── Phase1Progress.java          # Phase 1 progress tracking
 │   ├── Phase2Progress.java          # Phase 2 progress tracking
+│   ├── Phase3Decision.java          # Final review decision enum
+│   ├── Phase3Progress.java          # Phase 3 progress tracking
+│   ├── Phase3GridState.java         # Phase 3 grid state snapshot
 │   └── ResultBundle.java            # Final organized results
 ├── service/                          # Business logic services
 │   ├── ImageScannerService.java     # Recursive folder scanning
 │   ├── Phase1WorkflowService.java   # Phase 1 triage workflow
-│   ├── Phase2WorkflowService.java   # Phase 2 ranking workflow
 │   ├── QuicksortInteractiveRanker.java # Interactive sorting algorithm
+│   ├── Phase3WorkflowService.java   # Phase 3 final review workflow
+│   ├── ImageDeleteService.java      # Safe file deletion
 │   ├── ComparisonPair.java          # A/B comparison data
 │   ├── ComparisonChoice.java        # Comparison result enum
 │   └── ResultsPrinter.java          # Results output formatter
 └── ui/                              # JavaFX user interface
+    ├── SegmentedProgressBar.java    # Visual progress bar
     ├── QuicksortProgressPane.java   # Phase 2 progress display
-    └── SegmentedProgressBar.java    # Visual progress bar
+    ├── Phase3GridPane.java          # Phase 3 grid layout
+    ├── ImageThumbnailButton.java    # Clickable image thumbnail
+    └── DeleteConfirmationDialog.java # Deletion confirmation dialogs
 ```
 
 ## Dependencies
