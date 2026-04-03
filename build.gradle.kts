@@ -39,4 +39,9 @@ dependencies {
 
 application {
     mainClass = "net.markwalder.picturetriage.Main"
+    // JavaFX uses native code for graphics rendering on the underlying OS.
+    // This flag is required to allow JavaFX to access native graphics libraries (OpenGL, Metal, etc.)
+    applicationDefaultJvmArgs = listOf(
+        "--enable-native-access=javafx.graphics"
+    )
 }
