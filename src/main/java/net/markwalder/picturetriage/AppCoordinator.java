@@ -264,6 +264,8 @@ public class AppCoordinator {
         ImageView rightView = new ImageView();
         configurePhase2Image(leftView);
         configurePhase2Image(rightView);
+        leftView.setCursor(javafx.scene.Cursor.HAND);
+        rightView.setCursor(javafx.scene.Cursor.HAND);
 
         Label pairLabel = new Label();
         pairLabel.getStyleClass().add("label-body");
@@ -292,6 +294,20 @@ public class AppCoordinator {
                 return;
             }
             refreshPhase2View(leftView, rightView, pairLabel, progressPane, phase1Result);
+        });
+
+        leftView.setOnMouseClicked(event -> {
+            if (!ranker.isComplete()) {
+                ranker.submitChoice(ComparisonChoice.LEFT_BETTER);
+                refreshPhase2View(leftView, rightView, pairLabel, progressPane, phase1Result);
+            }
+        });
+
+        rightView.setOnMouseClicked(event -> {
+            if (!ranker.isComplete()) {
+                ranker.submitChoice(ComparisonChoice.RIGHT_BETTER);
+                refreshPhase2View(leftView, rightView, pairLabel, progressPane, phase1Result);
+            }
         });
 
         stage.setScene(scene);
