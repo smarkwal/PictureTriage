@@ -1,6 +1,8 @@
 package net.markwalder.picturetriage.ui;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Bounds;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
@@ -27,6 +29,7 @@ public class Phase3GridPane extends VBox {
     private static final double GAP = 10.0;
 
     private final GridPane gridPane;
+    private final ScrollPane scrollPane;
     private final Map<ImageItem, ImageThumbnailButton> thumbnailMap;
     private final ImageCache imageCache;
     private BiConsumer<ImageItem, Phase3Decision> onImageDecisionChanged;
@@ -53,7 +56,7 @@ public class Phase3GridPane extends VBox {
         this.thumbnailMap = new HashMap<>();
 
         // Add scroll pane to handle overflow
-        javafx.scene.control.ScrollPane scrollPane = new javafx.scene.control.ScrollPane(gridPane);
+        this.scrollPane = new ScrollPane(gridPane);
         scrollPane.setFitToWidth(true);
         scrollPane.setPannable(false);  // Disable panning so arrow keys work for navigation
         getChildren().add(scrollPane);
@@ -256,7 +259,37 @@ public class Phase3GridPane extends VBox {
             if (button != null) {
                 // Update visual focus indicator (don't request focus - use keyboard event interception instead)
                 updateFocusIndicators(button);
+                ensureThumbnailVisible(button);
             }
+        }
+    }
+
+    /**
+     * Scroll the viewport so the selected thumbnail is visible.
+     */
+    private void ensureThumbnailVisible(ImageThumbnailButton button) {
+        Bounds viewportBounds = scrollPane.getViewportBounds();
+        Bounds contentBounds = gridPane.getLayoutBounds();
+        Bounds buttonBounds = button.getBoundsInParent();
+
+        double maxScrollableY = contentBounds.getHeight() - viewportBounds.getHeight();
+        if (maxScrollableY <= 0) {
+            return;
+        }
+
+        double currentTopY = scrollPane.getVvalue() * maxScrollableY;
+        double currentBottomY = currentTopY + viewportBounds.getHeight();
+
+        double targetTopY = currentTopY;
+        if (buttonBounds.getMinY() < currentTopY) {
+            targetTopY = buttonBounds.getMinY();
+        } else if (buttonBounds.getMaxY() > currentBottomY) {
+            targetTopY = buttonBounds.getMaxY() - viewportBounds.getHeight();
+        }
+
+        if (targetTopY != currentTopY) {
+            double clampedTopY = Math.max(0, Math.min(targetTopY, maxScrollableY));
+            scrollPane.setVvalue(clampedTopY / maxScrollableY);
         }
     }
     
