@@ -11,5 +11,8 @@
 # MacOS
 .DS_Store
 
+# local project files
+PLAN.md
+
 # test files
 /test
