@@ -229,7 +229,7 @@ public class AppCoordinator {
         if (phase1Service.isComplete()) {
             ResultBundle phase1Result = phase1Service.partialResult();
             if (phase1Result.rankedTriageImages().isEmpty()) {
-                showResults(phase1Result);
+                startPhase3(phase1Result);
             } else {
                 startPhase2(phase1Result);
             }
