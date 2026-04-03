@@ -60,7 +60,7 @@
 }
 
 .button-primary {
-    -fx-background-color: linear-gradient(to bottom right, -fx-color-accent-secondary, -fx-color-accent-primary);
+    -fx-background-color: -fx-color-accent-primary;
     -fx-text-fill: white;
     -fx-border-color: transparent;
     -fx-background-radius: 10px;
@@ -68,7 +68,7 @@
 }
 
 .button-primary:hover {
-    -fx-background-color: linear-gradient(to bottom right, #966cff, #6791ff);
+    -fx-background-color: #6791ff;
 }
 
 .text-area {
@@ -128,11 +128,11 @@
 }
 
 .phase3-scroll-pane .scroll-bar .thumb {
-    -fx-background-color: linear-gradient(to bottom, -fx-color-accent-secondary, -fx-color-accent-primary);
+    -fx-background-color: -fx-color-accent-primary;
 }
 
 .phase3-scroll-pane .scroll-bar .thumb:hover {
-    -fx-background-color: linear-gradient(to bottom, #966cff, #6791ff);
+    -fx-background-color: #6791ff;
 }
 
 .progress-indicator {
@@ -144,7 +144,7 @@
 }
 
 .progress-bar > .bar {
-    -fx-background-color: linear-gradient(to right, -fx-color-accent-secondary, -fx-color-accent-primary);
+    -fx-background-color: -fx-color-accent-primary;
 }
 
 .tooltip {
