@@ -163,6 +163,31 @@
     -fx-text-fill: -fx-color-text-primary;
 }
 
+.dialog-pane > * > .label,
+.app-dialog > * > .label {
+    -fx-text-fill: -fx-color-text-primary;
+}
+
+.dialog-pane > .header-panel,
+.app-dialog > .header-panel {
+    -fx-background-color: -fx-color-bg-surface;
+}
+
+.dialog-pane > .header-panel > .label,
+.app-dialog > .header-panel > .label {
+    -fx-text-fill: -fx-color-text-primary;
+}
+
+.dialog-pane > .content,
+.app-dialog > .content {
+    -fx-background-color: -fx-color-bg-surface;
+}
+
+.dialog-pane .text,
+.app-dialog .text {
+    -fx-fill: -fx-color-text-primary;
+}
+
 .dialog-pane .button,
 .app-dialog .button {
     -fx-text-fill: -fx-color-text-primary;
