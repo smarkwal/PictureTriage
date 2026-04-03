@@ -21,6 +21,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.domain.Phase1Decision;
+import net.markwalder.picturetriage.domain.Phase3Decision;
 import net.markwalder.picturetriage.domain.ResultBundle;
 import net.markwalder.picturetriage.service.ComparisonChoice;
 import net.markwalder.picturetriage.service.ComparisonPair;
@@ -375,6 +376,10 @@ public class AppCoordinator {
         progressLabel.getStyleClass().add("label-centered");
         updatePhase3ProgressLabel(progressLabel);
 
+        // Mini-map: one block per image showing current keep/delete state.
+        BlockProgressBar phase3MiniMap = new BlockProgressBar(phase3Service.getTotalImages(), 1000, 24);
+        updatePhase3MiniMap(phase3MiniMap, gridPane.getCurrentFocusIndex());
+
         // Button bar
         Button finishButton = new Button("Finish & Delete");
         finishButton.getStyleClass().add("button-primary");
@@ -394,9 +399,11 @@ public class AppCoordinator {
             phase3Service.toggleDecision(image);
             // Update the progress label
             updatePhase3ProgressLabel(progressLabel);
+            // Update mini-map to reflect current keep/delete distribution and selection
+            updatePhase3MiniMap(phase3MiniMap, gridPane.getCurrentFocusIndex());
         });
 
-        VBox root = new VBox(10, title, instructions, gridPane, progressLabel, buttonBar);
+        VBox root = new VBox(10, title, instructions, gridPane, phase3MiniMap, progressLabel, buttonBar);
         root.setPadding(new Insets(16));
         VBox.setVgrow(gridPane, Priority.ALWAYS);
 
@@ -413,11 +420,18 @@ public class AppCoordinator {
                 event.getCode() == javafx.scene.input.KeyCode.SPACE) {
                 // Route navigation keys to grid pane
                 gridPane.handleKeyPress(event);
+                // Keep mini-map highlight aligned with current grid selection.
+                if (event.getCode() != javafx.scene.input.KeyCode.SPACE) {
+                    updatePhase3MiniMap(phase3MiniMap, gridPane.getCurrentFocusIndex());
+                }
             }
         });
         
         stage.setScene(scene);
-        Platform.runLater(gridPane::selectFirstImage);
+        Platform.runLater(() -> {
+            gridPane.selectFirstImage();
+            updatePhase3MiniMap(phase3MiniMap, gridPane.getCurrentFocusIndex());
+        });
     }
 
     private void updatePhase3ProgressLabel(Label label) {
@@ -425,6 +439,26 @@ public class AppCoordinator {
         label.setText(String.format("Keep: %d | Delete: %d | Total: %d",
                 progress.keepCount(), progress.deleteCount(), progress.totalImages()));
         label.setAlignment(Pos.CENTER);
+    }
+
+    private void updatePhase3MiniMap(BlockProgressBar miniMap, int selectedIndex) {
+        var snapshot = phase3Service.snapshot();
+        var orderedImages = snapshot.imageDisplayOrder();
+        var decisions = snapshot.decisions();
+
+        miniMap.update(
+            blockIndex -> {
+                if (blockIndex < 0 || blockIndex >= orderedImages.size()) {
+                    return Color.web("#414760");
+                }
+                ImageItem image = orderedImages.get(blockIndex);
+                Phase3Decision decision = decisions.get(image);
+                return decision == Phase3Decision.KEEP
+                    ? Color.web("#2e9f44")
+                    : Color.web("#bf2f2f");
+            },
+            blockIndex -> blockIndex == selectedIndex
+        );
     }
 
     private void onFinishAndDelete(Label progressLabel) {

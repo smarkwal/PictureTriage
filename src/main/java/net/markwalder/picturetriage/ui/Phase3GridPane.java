@@ -1,7 +1,13 @@
 package net.markwalder.picturetriage.ui;
 
-import javafx.geometry.Insets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -11,12 +17,6 @@ import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.domain.Phase3Decision;
 import net.markwalder.picturetriage.domain.Phase3GridState;
 import net.markwalder.picturetriage.service.ImageCache;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
 
 /**
  * Grid layout pane for Phase 3 displaying all images.
@@ -328,6 +328,18 @@ public class Phase3GridPane extends VBox {
      */
     public void setOnImageDecisionChanged(BiConsumer<ImageItem, Phase3Decision> callback) {
         this.onImageDecisionChanged = callback;
+    }
+
+    /**
+     * Returns the currently selected thumbnail index in display order.
+     *
+     * @return selected index (0-based), or -1 when there are no images
+     */
+    public int getCurrentFocusIndex() {
+        if (imageOrder.isEmpty()) {
+            return -1;
+        }
+        return currentFocusIndex;
     }
 }
 
