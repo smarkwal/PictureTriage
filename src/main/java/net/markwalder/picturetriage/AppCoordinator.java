@@ -583,6 +583,8 @@ public class AppCoordinator {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
+        alert.getDialogPane().getStylesheets().add(styleSheet);
+        alert.getDialogPane().getStyleClass().add("app-dialog");
         alert.showAndWait();
     }
 

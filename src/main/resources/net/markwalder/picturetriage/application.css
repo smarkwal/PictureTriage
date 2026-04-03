@@ -8,14 +8,20 @@
 
 .root {
     /* Primary Colors */
+    -fx-color-bg-primary: #050507;
+    -fx-color-bg-surface: #0f111a;
+    -fx-color-bg-surface-2: #171a28;
     -fx-color-keep: #2e9f44;
-    -fx-color-triage: #d8b400;
+    -fx-color-triage: #8a5cff;
     -fx-color-delete: #bf2f2f;
-    -fx-color-neutral: #d7d7d7;
-    -fx-color-border-dark: #666666;
-    -fx-color-text-secondary: #555555;
-    -fx-color-border-light: #f0f0f0;
-    -fx-color-placeholder-bg: #cccccc;
+    -fx-color-accent-primary: #4f7cff;
+    -fx-color-accent-secondary: #8a5cff;
+    -fx-color-neutral: #232638;
+    -fx-color-border-dark: #414760;
+    -fx-color-text-primary: #f4f6ff;
+    -fx-color-text-secondary: #bcc3dd;
+    -fx-color-border-light: #2f3448;
+    -fx-color-placeholder-bg: #262b40;
     
     /* Spacing */
     -fx-size-padding-small: 4px;
@@ -30,6 +36,100 @@
     -fx-size-thumbnail: 200px;
     -fx-size-thumbnail-border: 4px;
     -fx-size-grid-gap: 10px;
+
+    -fx-background-color: -fx-color-bg-primary;
+    -fx-text-fill: -fx-color-text-primary;
+}
+
+/* Global defaults */
+
+.label {
+    -fx-text-fill: -fx-color-text-primary;
+}
+
+.button {
+    -fx-text-fill: -fx-color-text-primary;
+    -fx-background-color: -fx-color-bg-surface-2;
+    -fx-border-color: -fx-color-border-light;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.button:hover {
+    -fx-background-color: #20253a;
+}
+
+.button-primary {
+    -fx-background-color: linear-gradient(to bottom right, -fx-color-accent-secondary, -fx-color-accent-primary);
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+.button-primary:hover {
+    -fx-background-color: linear-gradient(to bottom right, #966cff, #6791ff);
+}
+
+.text-area {
+    -fx-control-inner-background: -fx-color-bg-surface;
+    -fx-background-color: -fx-color-bg-surface;
+    -fx-text-fill: -fx-color-text-primary;
+    -fx-highlight-fill: -fx-color-triage;
+    -fx-highlight-text-fill: white;
+}
+
+.text-area .content {
+    -fx-background-color: -fx-color-bg-surface;
+}
+
+.text-area .text {
+    -fx-fill: -fx-color-text-primary;
+}
+
+.scroll-pane {
+    -fx-fit-to-width: true;
+    -fx-pannable: true;
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.progress-indicator {
+    -fx-progress-color: -fx-color-triage;
+}
+
+.progress-bar > .track {
+    -fx-background-color: -fx-color-neutral;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: linear-gradient(to right, -fx-color-accent-secondary, -fx-color-accent-primary);
+}
+
+.tooltip {
+    -fx-background-color: -fx-color-bg-surface-2;
+    -fx-text-fill: -fx-color-text-primary;
+    -fx-border-color: -fx-color-border-light;
+}
+
+.dialog-pane,
+.app-dialog {
+    -fx-background-color: -fx-color-bg-surface;
+}
+
+.dialog-pane .label,
+.app-dialog .label {
+    -fx-text-fill: -fx-color-text-primary;
+}
+
+.dialog-pane .button,
+.app-dialog .button {
+    -fx-text-fill: -fx-color-text-primary;
+    -fx-background-color: -fx-color-bg-surface-2;
+    -fx-border-color: -fx-color-border-light;
 }
 
 /* ============================================================================
@@ -83,11 +183,13 @@
     -fx-border-width: 1;
     -fx-hgap: -fx-size-grid-gap;
     -fx-vgap: -fx-size-grid-gap;
+    -fx-background-color: rgba(20, 23, 35, 0.7);
 }
 
 .grid-container {
     -fx-border-color: -fx-color-border-light;
     -fx-border-width: 1;
+    -fx-background-color: rgba(13, 15, 24, 0.85);
 }
 
 /* ============================================================================
@@ -116,10 +218,4 @@
 .text-area {
     -fx-font-family: "Courier New", monospace;
     -fx-font-size: 11px;
-}
-
-/* Scroll pane adjustments */
-.scroll-pane {
-    -fx-fit-to-width: true;
-    -fx-pannable: true;
 }

@@ -27,7 +27,7 @@ public class SegmentedProgressBar extends Canvas {
         double width = getWidth();
         double height = getHeight();
 
-        gc.setFill(Color.web("#d7d7d7"));
+        gc.setFill(Color.web("#232638"));
         gc.fillRoundRect(0, 0, width, height, 8, 8);
 
         double segmentWidth = width / total;
@@ -37,14 +37,14 @@ public class SegmentedProgressBar extends Canvas {
             gc.fillRect(idx * segmentWidth, 0, segmentWidth, height);
         }
 
-        gc.setStroke(Color.web("#666666"));
+        gc.setStroke(Color.web("#414760"));
         gc.strokeRoundRect(0, 0, width, height, 8, 8);
     }
 
     private Color colorFor(Phase1Decision decision) {
         return switch (decision) {
             case KEEP -> Color.web("#2e9f44");
-            case TRIAGE -> Color.web("#d8b400");
+            case TRIAGE -> Color.web("#8a5cff");
             case DELETE -> Color.web("#bf2f2f");
         };
     }

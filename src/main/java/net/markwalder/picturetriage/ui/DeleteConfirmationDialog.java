@@ -13,6 +13,13 @@ import net.markwalder.picturetriage.util.StringUtils;
  * Returns a boolean indicating whether the user confirmed the deletion.
  */
 public class DeleteConfirmationDialog {
+    private static void applyDialogTheme(Alert alert, Stage owner) {
+        if (owner != null && owner.getScene() != null) {
+            alert.getDialogPane().getStylesheets().addAll(owner.getScene().getStylesheets());
+        }
+        alert.getDialogPane().getStyleClass().add("app-dialog");
+    }
+
     /**
      * Show a confirmation dialog for deleting the specified number of images.
      * 
@@ -31,6 +38,7 @@ public class DeleteConfirmationDialog {
             "Are you sure?"
         );
         alert.initOwner(owner);
+        applyDialogTheme(alert, owner);
 
         ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
         return result == ButtonType.OK;
@@ -49,6 +57,7 @@ public class DeleteConfirmationDialog {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.initOwner(owner);
+        applyDialogTheme(alert, owner);
 
         // Make dialog wider to accommodate longer messages
         alert.getDialogPane().setPrefWidth(500);
@@ -69,6 +78,7 @@ public class DeleteConfirmationDialog {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.initOwner(owner);
+        applyDialogTheme(alert, owner);
 
         // Make dialog wider to accommodate longer messages
         alert.getDialogPane().setPrefWidth(500);
