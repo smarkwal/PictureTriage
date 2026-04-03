@@ -9,7 +9,11 @@ repositories {
 
 javafx {
     version = "21.0.2"
-    modules = listOf("javafx.controls")
+    modules = listOf("javafx.controls", "javafx.swing")
+}
+
+dependencies {
+    implementation("com.github.usefulness:webp-imageio:0.10.0")
 }
 
 application {

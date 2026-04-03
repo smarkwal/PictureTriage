@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -28,8 +29,12 @@ import net.markwalder.picturetriage.service.ResultsPrinter;
 import net.markwalder.picturetriage.ui.QuicksortProgressPane;
 import net.markwalder.picturetriage.ui.SegmentedProgressBar;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
+import javax.imageio.ImageIO;
 
 public class AppCoordinator {
     private static final double WINDOW_WIDTH = 1200;
@@ -278,9 +283,23 @@ public class AppCoordinator {
     }
 
     private Image loadImage(ImageItem item) {
+        String name = item.path().getFileName().toString().toLowerCase(Locale.ROOT);
+        if (name.endsWith(".webp")) {
+            return loadWebpImage(item);
+        }
         try {
             return new Image(item.path().toUri().toString(), true);
         } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    private Image loadWebpImage(ImageItem item) {
+        try {
+            BufferedImage bufferedImage = ImageIO.read(item.path().toFile());
+            if (bufferedImage == null) return null;
+            return SwingFXUtils.toFXImage(bufferedImage, null);
+        } catch (IOException ex) {
             return null;
         }
     }
