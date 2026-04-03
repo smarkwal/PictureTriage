@@ -4,11 +4,10 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -22,6 +21,7 @@ import net.markwalder.picturetriage.service.ImageCache;
 import net.markwalder.picturetriage.service.Phase1WorkflowService;
 import net.markwalder.picturetriage.ui.BlockProgressBar;
 import net.markwalder.picturetriage.ui.ImageDisplayPane;
+import net.markwalder.picturetriage.ui.PhaseLayoutContainer;
 
 public class Phase1Controller {
     private final Stage stage;
@@ -56,10 +56,6 @@ public class Phase1Controller {
     }
 
     private void showPhase1() {
-        Label instructions = new Label("Phase 1: Up = keep, Right = triage, Down = delete");
-        instructions.getStyleClass().add("label-instructions");
-        instructions.setTooltip(new Tooltip("Use arrow keys: UP->Keep, RIGHT->Triage, DOWN->Delete"));
-
         Label indexLabel = new Label();
         indexLabel.setMaxWidth(Double.MAX_VALUE);
         indexLabel.setAlignment(Pos.CENTER);
@@ -78,9 +74,14 @@ public class Phase1Controller {
         HBox progressBarRow = new HBox(blockProgressBar);
         progressBarRow.setAlignment(Pos.CENTER);
 
-        VBox root = new VBox(10, instructions, indexLabel, imagePane, progressBarRow, countsLabel);
-        root.setPadding(new Insets(16));
-        root.setAlignment(Pos.TOP_CENTER);
+        VBox content = new VBox(10, indexLabel, imagePane, progressBarRow, countsLabel);
+        content.setAlignment(Pos.TOP_CENTER);
+
+        PhaseLayoutContainer root = new PhaseLayoutContainer(
+            "Phase 1: Triage Images",
+            content,
+            List.<Button>of()
+        );
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
         scene.getStylesheets().add(styleSheet);

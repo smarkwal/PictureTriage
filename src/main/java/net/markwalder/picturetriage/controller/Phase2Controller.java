@@ -4,10 +4,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -20,6 +19,7 @@ import net.markwalder.picturetriage.service.ComparisonPair;
 import net.markwalder.picturetriage.service.ImageCache;
 import net.markwalder.picturetriage.service.QuicksortInteractiveRanker;
 import net.markwalder.picturetriage.ui.ImageDisplayPane;
+import net.markwalder.picturetriage.ui.PhaseLayoutContainer;
 import net.markwalder.picturetriage.ui.QuicksortProgressPane;
 
 public class Phase2Controller {
@@ -58,9 +58,6 @@ public class Phase2Controller {
     }
 
     private void showPhase2() {
-        Label instructions = new Label("Phase 2: Left = left image is better, Right = right image is better");
-        instructions.getStyleClass().add("label-instructions");
-
         ImageDisplayPane leftPane = new ImageDisplayPane(560, 620, imageCache, selectedRootFolder);
         ImageDisplayPane rightPane = new ImageDisplayPane(560, 620, imageCache, selectedRootFolder);
         leftPane.setCursor(javafx.scene.Cursor.HAND);
@@ -75,8 +72,13 @@ public class Phase2Controller {
         HBox.setHgrow(leftPane, Priority.ALWAYS);
         HBox.setHgrow(rightPane, Priority.ALWAYS);
 
-        VBox root = new VBox(10, instructions, compareRow, progressPane);
-        root.setPadding(new Insets(16));
+        VBox content = new VBox(10, compareRow, progressPane);
+
+        PhaseLayoutContainer root = new PhaseLayoutContainer(
+            "Phase 2: Rank Triaged Images",
+            content,
+            List.<Button>of()
+        );
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
         scene.getStylesheets().add(styleSheet);

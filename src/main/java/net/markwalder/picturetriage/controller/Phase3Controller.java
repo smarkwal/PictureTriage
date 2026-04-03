@@ -4,13 +4,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -22,6 +19,7 @@ import net.markwalder.picturetriage.service.ImageCache;
 import net.markwalder.picturetriage.service.Phase3WorkflowService;
 import net.markwalder.picturetriage.ui.BlockProgressBar;
 import net.markwalder.picturetriage.ui.Phase3GridPane;
+import net.markwalder.picturetriage.ui.PhaseLayoutContainer;
 
 public class Phase3Controller {
     private final Stage stage;
@@ -64,13 +62,6 @@ public class Phase3Controller {
     }
 
     private void showPhase3() {
-        Label title = new Label("Phase 3: Final Review");
-        title.getStyleClass().add("label-title-secondary");
-
-        Label instructions = new Label("Click images to toggle between keep (green) and delete (red)");
-        instructions.getStyleClass().add("label-instructions-secondary");
-        instructions.setTooltip(new Tooltip("Use arrow keys to navigate, SPACE to toggle, or click to toggle"));
-
         Phase3GridPane gridPane = new Phase3GridPane(imageCache);
         gridPane.populate(phase3Service.snapshot());
 
@@ -98,19 +89,20 @@ public class Phase3Controller {
             }
         });
 
-        HBox buttonBar = new HBox(10, finishButton, cancelButton);
-        buttonBar.setAlignment(Pos.CENTER);
-        buttonBar.setPadding(new Insets(10));
-
         gridPane.setOnImageDecisionChanged((image, newDecision) -> {
             phase3Service.toggleDecision(image);
             updatePhase3ProgressLabel(progressLabel);
             updatePhase3MiniMap(phase3MiniMap, gridPane.getCurrentFocusIndex());
         });
 
-        VBox root = new VBox(10, title, instructions, gridPane, phase3MiniMap, progressLabel, buttonBar);
-        root.setPadding(new Insets(16));
+        VBox content = new VBox(10, gridPane, phase3MiniMap, progressLabel);
         VBox.setVgrow(gridPane, Priority.ALWAYS);
+
+        PhaseLayoutContainer root = new PhaseLayoutContainer(
+            "Phase 3: Final Review",
+            content,
+            List.of(finishButton, cancelButton)
+        );
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
         scene.getStylesheets().add(styleSheet);
