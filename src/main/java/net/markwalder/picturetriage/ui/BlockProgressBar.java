@@ -28,7 +28,7 @@ import javafx.scene.paint.Color;
  * the right.
  */
 public class BlockProgressBar extends HBox {
-    private static final int MAX_BLOCK_SIZE = 10;
+    private static final int MAX_BLOCK_SIZE = 20;
     private static final int BLOCK_SPACING = 1;
     private static final int HIGHLIGHT_BORDER_WIDTH = 2;
     private static final int MARGIN = 10;
@@ -44,7 +44,7 @@ public class BlockProgressBar extends HBox {
     private IntPredicate isHighlighted;
 
     public BlockProgressBar(int totalBlocks) {
-        this(totalBlocks, 1000, 24);
+        this(totalBlocks, 1000, 32);
     }
 
     public BlockProgressBar(int totalBlocks, double width, double height) {
