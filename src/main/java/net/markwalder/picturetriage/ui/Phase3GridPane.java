@@ -57,6 +57,7 @@ public class Phase3GridPane extends VBox {
 
         // Add scroll pane to handle overflow
         this.scrollPane = new ScrollPane(gridPane);
+        scrollPane.getStyleClass().add("phase3-scroll-pane");
         scrollPane.setFitToWidth(true);
         scrollPane.setPannable(false);  // Disable panning so arrow keys work for navigation
         getChildren().add(scrollPane);

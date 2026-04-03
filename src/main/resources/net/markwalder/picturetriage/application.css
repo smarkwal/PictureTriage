@@ -97,6 +97,44 @@
     -fx-background-color: transparent;
 }
 
+.scroll-pane .scroll-bar:vertical,
+.scroll-pane .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar .track {
+    -fx-background-color: #171a28;
+    -fx-background-radius: 8px;
+}
+
+.scroll-pane .scroll-bar .thumb {
+    -fx-background-color: #394061;
+    -fx-background-radius: 8px;
+}
+
+.scroll-pane .scroll-bar .thumb:hover {
+    -fx-background-color: #495177;
+}
+
+.scroll-pane .scroll-bar .increment-button,
+.scroll-pane .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-pane .scroll-bar .increment-arrow,
+.scroll-pane .scroll-bar .decrement-arrow {
+    -fx-background-color: -fx-color-text-secondary;
+}
+
+.phase3-scroll-pane .scroll-bar .thumb {
+    -fx-background-color: linear-gradient(to bottom, -fx-color-accent-secondary, -fx-color-accent-primary);
+}
+
+.phase3-scroll-pane .scroll-bar .thumb:hover {
+    -fx-background-color: linear-gradient(to bottom, #966cff, #6791ff);
+}
+
 .progress-indicator {
     -fx-progress-color: -fx-color-triage;
 }
