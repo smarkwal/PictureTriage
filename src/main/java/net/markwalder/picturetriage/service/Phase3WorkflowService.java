@@ -23,6 +23,9 @@ public class Phase3WorkflowService {
     /**
      * Initialize Phase 3 with all images from previous phases.
      * 
+     * For triaged images, the first 50% (better-ranked) are marked as KEEP,
+     * and the remaining 50% (worse-ranked) are marked for DELETE.
+     * 
      * @param keptImages images decided to keep in Phase 1
      * @param rankedTriageImages images triaged in Phase 1, ranked in Phase 2
      * @param deletedImages images decided to delete in Phase 1
@@ -37,15 +40,22 @@ public class Phase3WorkflowService {
         this.displayOrder.addAll(rankedTriageImages);
         this.displayOrder.addAll(deletedImages);
 
-        // Initialize decisions: kept/triaged → KEEP, deleted → DELETE
+        // Initialize decisions: kept/triaged (first 50%) → KEEP, triaged (last 50%)/deleted → DELETE
         this.decisions = new HashMap<>();
 
         for (ImageItem item : keptImages) {
             decisions.put(item, Phase3Decision.KEEP);
         }
-        for (ImageItem item : rankedTriageImages) {
-            decisions.put(item, Phase3Decision.KEEP);
+        
+        // Split triaged images: first 50% (better-ranked) → KEEP, rest → DELETE
+        int triagedCount = rankedTriageImages.size();
+        int keepBoundary = (triagedCount + 1) / 2;  // Round up so >= 50% stay as KEEP
+        for (int i = 0; i < rankedTriageImages.size(); i++) {
+            ImageItem item = rankedTriageImages.get(i);
+            Phase3Decision decision = i < keepBoundary ? Phase3Decision.KEEP : Phase3Decision.DELETE;
+            decisions.put(item, decision);
         }
+        
         for (ImageItem item : deletedImages) {
             decisions.put(item, Phase3Decision.DELETE);
         }
