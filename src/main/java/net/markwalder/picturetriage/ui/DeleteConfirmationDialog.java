@@ -25,7 +25,7 @@ public class DeleteConfirmationDialog {
         alert.setHeaderText("Delete " + deleteCount + " Image(s)?");
         alert.setContentText(
                 "You are about to permanently delete " + deleteCount + " image(s).\n\n" +
-                "This action cannot be undone. Are you sure?"
+            "Are you sure?"
         );
         alert.initOwner(owner);
 

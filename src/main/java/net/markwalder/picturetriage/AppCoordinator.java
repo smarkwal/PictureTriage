@@ -370,9 +370,9 @@ public class AppCoordinator {
         // Add deletion summary if applicable
         if (deleteResult != null && deleteResult.deletedCount() > 0) {
             resultsText.append("=== DELETION RESULTS ===\n");
-            resultsText.append("Successfully deleted: ").append(deleteResult.deletedCount()).append(" file(s)\n");
+            resultsText.append("Successfully removed: ").append(deleteResult.deletedCount()).append(" file(s)\n");
             if (deleteResult.failedCount() > 0) {
-                resultsText.append("Failed to delete: ").append(deleteResult.failedCount()).append(" file(s)\n");
+                resultsText.append("Failed to remove: ").append(deleteResult.failedCount()).append(" file(s)\n");
             }
             resultsText.append("\n");
         }

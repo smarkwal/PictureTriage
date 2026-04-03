@@ -2,6 +2,7 @@ package net.markwalder.picturetriage.service;
 
 import net.markwalder.picturetriage.domain.ImageItem;
 
+import java.awt.Desktop;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,14 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Service for safely deleting image files from disk.
+ * Service for safely removing image files from disk.
  * 
- * Handles deletion errors gracefully, accumulating failures so the UI can
- * report which files were successfully deleted and which failed.
+ * Prefers moving files to the OS trash/recycle bin when available. If trash
+ * support is unavailable, falls back to permanent deletion.
+ * 
+ * Handles per-file errors gracefully, accumulating failures so the UI can
+ * report which files were successfully removed and which failed.
  */
 public class ImageDeleteService {
     /**
-     * Result of a file deletion operation.
+    * Result of a file removal operation.
      */
     public record DeleteResult(
             int deletedCount,
@@ -24,13 +28,13 @@ public class ImageDeleteService {
             List<FailedDeletion> failedDeletions
     ) {
         /**
-         * Represents a single file deletion failure.
+         * Represents a single file removal failure.
          */
         public record FailedDeletion(Path filePath, String reason) {
         }
 
         /**
-         * Check if all deletions succeeded.
+         * Check if all removals succeeded.
          */
         public boolean allSucceeded() {
             return failedCount == 0;
@@ -38,28 +42,48 @@ public class ImageDeleteService {
     }
 
     /**
-     * Delete the specified image files from disk.
+     * Remove the specified image files from disk.
      * 
-     * Attempts to delete each file individually. If a file deletion fails,
-     * the error is recorded and deletion continues for remaining files.
+     * Attempts to move each file to trash when supported by the platform.
+     * If trash is unsupported, permanently deletes each file.
      * 
-     * @param imagesToDelete list of ImageItem objects to delete from disk
+     * If moving a file to trash throws an exception, the file is kept and the
+     * error is logged to stderr and recorded in the result.
+     * 
+     * @param imagesToDelete list of ImageItem objects to remove from disk
      * @return DeleteResult with counts and list of failures
      */
     public static DeleteResult deleteFiles(List<ImageItem> imagesToDelete) {
         int deletedCount = 0;
         List<DeleteResult.FailedDeletion> failedDeletions = new ArrayList<>();
+        Desktop desktop = getDesktopIfTrashSupported();
+        boolean trashSupported = desktop != null;
 
         for (ImageItem image : imagesToDelete) {
+            Path path = image.path();
+
+            if (trashSupported) {
+                try {
+                    boolean moved = desktop.moveToTrash(path.toFile());
+                    if (moved) {
+                        deletedCount++;
+                    } else {
+                        failedDeletions.add(new DeleteResult.FailedDeletion(path,
+                                "Could not move file to OS trash."));
+                    }
+                } catch (RuntimeException e) {
+                    String reason = formatReason(e);
+                    System.err.println("Failed to move file to trash (file kept): " + path + " - " + reason);
+                    failedDeletions.add(new DeleteResult.FailedDeletion(path, reason));
+                }
+                continue;
+            }
+
             try {
-                Path path = image.path();
                 Files.delete(path);
                 deletedCount++;
             } catch (IOException e) {
-                String reason = e.getClass().getSimpleName() + ": " + e.getMessage();
-                failedDeletions.add(
-                        new DeleteResult.FailedDeletion(image.path(), reason)
-                );
+                failedDeletions.add(new DeleteResult.FailedDeletion(path, formatReason(e)));
             }
         }
 
@@ -75,10 +99,10 @@ public class ImageDeleteService {
      */
     public static String formatResult(DeleteResult result) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Deleted: ").append(result.deletedCount).append(" file(s)");
+        sb.append("Removed: ").append(result.deletedCount).append(" file(s)");
 
         if (result.failedCount > 0) {
-            sb.append("\n\nFailed to delete ").append(result.failedCount).append(" file(s):");
+            sb.append("\n\nFailed to remove ").append(result.failedCount).append(" file(s):");
             for (DeleteResult.FailedDeletion failure : result.failedDeletions) {
                 sb.append("\n  • ").append(failure.filePath()).append("\n    ")
                         .append(failure.reason());
@@ -86,5 +110,28 @@ public class ImageDeleteService {
         }
 
         return sb.toString();
+    }
+
+    private static Desktop getDesktopIfTrashSupported() {
+        if (!Desktop.isDesktopSupported()) {
+            return null;
+        }
+
+        Desktop desktop;
+        try {
+            desktop = Desktop.getDesktop();
+        } catch (UnsupportedOperationException e) {
+            return null;
+        }
+
+        if (!desktop.isSupported(Desktop.Action.MOVE_TO_TRASH)) {
+            return null;
+        }
+
+        return desktop;
+    }
+
+    private static String formatReason(Exception e) {
+        return e.getClass().getSimpleName() + ": " + e.getMessage();
     }
 }
