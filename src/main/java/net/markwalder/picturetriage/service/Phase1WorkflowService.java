@@ -6,6 +6,7 @@ import net.markwalder.picturetriage.domain.Phase1Progress;
 import net.markwalder.picturetriage.domain.ResultBundle;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Phase1WorkflowService {
@@ -18,7 +19,9 @@ public class Phase1WorkflowService {
     private Phase1Progress progress;
 
     public Phase1WorkflowService(List<ImageItem> images) {
-        this.images = List.copyOf(images);
+        List<ImageItem> shuffled = new ArrayList<>(images);
+        Collections.shuffle(shuffled);
+        this.images = List.copyOf(shuffled);
         this.index = 0;
         this.progress = Phase1Progress.empty(images.size());
     }
