@@ -309,11 +309,6 @@
    Specific Component Overrides
    ============================================================================ */
 
-/* Phase 1 & 2 image container */
-.image-container {
-    -fx-alignment: center;
-}
-
 /* Text areas and read-only content */
 .text-area {
     -fx-font-family: "Courier New", monospace;
