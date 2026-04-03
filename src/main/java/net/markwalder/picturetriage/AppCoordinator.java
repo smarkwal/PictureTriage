@@ -29,7 +29,7 @@ import net.markwalder.picturetriage.service.ImageScannerService;
 import net.markwalder.picturetriage.service.Phase1WorkflowService;
 import net.markwalder.picturetriage.service.Phase3WorkflowService;
 import net.markwalder.picturetriage.service.QuicksortInteractiveRanker;
-import net.markwalder.picturetriage.service.ResultsPrinter;
+
 import net.markwalder.picturetriage.ui.DeleteConfirmationDialog;
 import net.markwalder.picturetriage.ui.ImageDisplayPane;
 import net.markwalder.picturetriage.ui.Phase3GridPane;
@@ -48,7 +48,6 @@ public class AppCoordinator {
     private final String styleSheet;
     private final ImageScannerService scannerService = new ImageScannerService();
     private final ImageCache imageCache = new ImageCache();
-    private final ResultsPrinter resultsPrinter = new ResultsPrinter();
 
     private Path selectedRootFolder;
     private List<ImageItem> scannedImages = List.of();
@@ -440,16 +439,8 @@ public class AppCoordinator {
             String resultMessage = ImageDeleteService.formatResult(deleteResult);
             DeleteConfirmationDialog.showResult("Deletion Complete", resultMessage, stage);
 
-            // Create final result bundle with kept images only
-            List<ImageItem> finalKept = phase3Service.getImagesToKeep();
-            ResultBundle finalResult = new ResultBundle(
-                    finalKept,
-                    List.of(),  // All triaged images are now categorized
-                    List.of()   // Deleted images are removed from disk
-            );
-
-            // Show results with deletion feedback
-            showResults(finalResult, deleteResult);
+            // Return to folder selection
+            showFolderSelection();
         });
         
         // Handle deletion failure
@@ -479,73 +470,6 @@ public class AppCoordinator {
         Scene scene = new Scene(content, WINDOW_WIDTH, WINDOW_HEIGHT);
         scene.getStylesheets().add(styleSheet);
         stage.setScene(scene);
-    }
-
-    private void showResults(ResultBundle resultBundle) {
-        showResults(resultBundle, null);
-    }
-
-    private void showResults(ResultBundle resultBundle, ImageDeleteService.DeleteResult deleteResult) {
-        resultsPrinter.print(resultBundle, System.out);
-
-        Label header = new Label("Results");
-        header.getStyleClass().add("label-title-secondary");
-
-        StringBuilder resultsText = new StringBuilder();
-        
-        // Add deletion summary if applicable
-        if (deleteResult != null && deleteResult.deletedCount() > 0) {
-            resultsText.append("=== DELETION RESULTS ===\n");
-            resultsText.append("Successfully removed: ").append(deleteResult.deletedCount()).append(" ")
-                .append(StringUtils.pluralize(deleteResult.deletedCount(), "image", "images")).append("\n");
-            if (deleteResult.failedCount() > 0) {
-                resultsText.append("Failed to remove: ").append(deleteResult.failedCount()).append(" ")
-                    .append(StringUtils.pluralize(deleteResult.failedCount(), "image", "images")).append("\n");
-            }
-            resultsText.append("\n");
-        }
-        
-        resultsText.append(renderResults(resultBundle));
-
-        TextArea textArea = new TextArea(resultsText.toString());
-        textArea.setEditable(false);
-        textArea.setWrapText(false);
-
-        Button restart = new Button("Start Over");
-        restart.getStyleClass().add("button-primary");
-        restart.setOnAction(e -> showFolderSelection());
-
-        BorderPane root = new BorderPane();
-        root.setPadding(new Insets(16));
-        root.setTop(header);
-        root.setCenter(textArea);
-        root.setBottom(restart);
-        BorderPane.setAlignment(restart, Pos.CENTER_LEFT);
-
-        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-        scene.getStylesheets().add(styleSheet);
-        stage.setScene(scene);
-    }
-
-    private String renderResults(ResultBundle result) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("1. Kept in phase 1\n");
-        appendList(sb, result.keptImages());
-        sb.append("\n2. Ranked in phase 2\n");
-        appendList(sb, result.rankedTriageImages());
-        sb.append("\n3. Deleted in phase 1\n");
-        appendList(sb, result.deletedImages());
-        return sb.toString();
-    }
-
-    private void appendList(StringBuilder sb, List<ImageItem> items) {
-        if (items.isEmpty()) {
-            sb.append("   (none)\n");
-            return;
-        }
-        for (int i = 0; i < items.size(); i++) {
-            sb.append("   ").append(i + 1).append(". ").append(displayPath(items.get(i))).append("\n");
-        }
     }
 
     private String displayPath(ImageItem item) {
