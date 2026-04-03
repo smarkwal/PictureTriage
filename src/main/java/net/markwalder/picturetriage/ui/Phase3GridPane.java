@@ -125,14 +125,24 @@ public class Phase3GridPane extends VBox {
         
         boolean handled = false;
         
-        if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.LEFT) {
-            // Move to previous thumbnail
-            currentFocusIndex = (currentFocusIndex - 1 + imageOrder.size()) % imageOrder.size();
+        if (event.getCode() == KeyCode.UP) {
+            // Move up one row (same column)
+            moveUp();
             focusCurrentThumbnail();
             handled = true;
-        } else if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.RIGHT) {
-            // Move to next thumbnail
-            currentFocusIndex = (currentFocusIndex + 1) % imageOrder.size();
+        } else if (event.getCode() == KeyCode.DOWN) {
+            // Move down one row (same column)
+            moveDown();
+            focusCurrentThumbnail();
+            handled = true;
+        } else if (event.getCode() == KeyCode.LEFT) {
+            // Move left within row
+            moveLeft();
+            focusCurrentThumbnail();
+            handled = true;
+        } else if (event.getCode() == KeyCode.RIGHT) {
+            // Move right within row
+            moveRight();
             focusCurrentThumbnail();
             handled = true;
         } else if (event.getCode() == KeyCode.SPACE) {
@@ -147,6 +157,71 @@ public class Phase3GridPane extends VBox {
         
         if (handled) {
             event.consume();
+        }
+    }
+    
+    /**
+     * Move focus left within the current row, wrapping to the rightmost position.
+     */
+    private void moveLeft() {
+        int column = currentFocusIndex % COLUMNS;
+        int row = currentFocusIndex / COLUMNS;
+        int rowStart = row * COLUMNS;
+        int rowEnd = Math.min(rowStart + COLUMNS, imageOrder.size());
+        
+        if (column > 0) {
+            currentFocusIndex--;
+        } else {
+            // At leftmost, wrap to rightmost of current row
+            currentFocusIndex = rowEnd - 1;
+        }
+    }
+    
+    /**
+     * Move focus right within the current row, wrapping to the leftmost position.
+     */
+    private void moveRight() {
+        int column = currentFocusIndex % COLUMNS;
+        int row = currentFocusIndex / COLUMNS;
+        int rowStart = row * COLUMNS;
+        int rowEnd = Math.min(rowStart + COLUMNS, imageOrder.size());
+        
+        if (currentFocusIndex + 1 < rowEnd) {
+            currentFocusIndex++;
+        } else {
+            // At rightmost, wrap to leftmost of current row
+            currentFocusIndex = rowStart;
+        }
+    }
+    
+    /**
+     * Move focus up one row (same column position), wrapping to the bottom row.
+     */
+    private void moveUp() {
+        int column = currentFocusIndex % COLUMNS;
+        int newIndex = currentFocusIndex - COLUMNS;
+        
+        if (newIndex >= 0) {
+            currentFocusIndex = newIndex;
+        } else {
+            // Wrap to same column in the last row
+            int lastRowStart = (imageOrder.size() - 1) / COLUMNS * COLUMNS;
+            currentFocusIndex = Math.min(lastRowStart + column, imageOrder.size() - 1);
+        }
+    }
+    
+    /**
+     * Move focus down one row (same column position), wrapping to the top row.
+     */
+    private void moveDown() {
+        int column = currentFocusIndex % COLUMNS;
+        int newIndex = currentFocusIndex + COLUMNS;
+        
+        if (newIndex < imageOrder.size()) {
+            currentFocusIndex = newIndex;
+        } else {
+            // Wrap to same column in the first row
+            currentFocusIndex = column;
         }
     }
     
