@@ -54,13 +54,7 @@ JPG, JPEG, PNG, GIF, TIFF, BMP, WEBP (extension check is case-insensitive)
 
 ## Code Style & Conventions
 
-- **Packages**: `net.markwalder.picturetriage.*` using the subpackage structure above
-- **Classes / Records / Enums**: PascalCase
-- **Methods**: camelCase
-- **Constants**: UPPER_SNAKE_CASE
-- One public type per file
-- Domain layer uses immutable records; mutable state lives only in services
-- Services are decoupled from JavaFX and can be tested independently
+See [java.instructions.md](instructions/java.instructions.md) — automatically applied when editing Java files.
 
 ## Common Development Tasks
 
@@ -76,3 +70,9 @@ JPG, JPEG, PNG, GIF, TIFF, BMP, WEBP (extension check is case-insensitive)
 - **Native access error**: Verify `--enable-native-access=javafx.graphics` is present in JVM args
 - **Image not displayed**: Check that the image scanner recognizes the file extension; verify TwelveMonkeys plugin is on the classpath
 - **File not found**: Verify paths are absolute and files are readable
+
+## Security Considerations
+
+- The application does not execute any untrusted code or handle network input, so the attack surface is minimal
+- File deletion is gated behind a confirmation dialog and per-file error handling to prevent accidental data loss
+- Whenever possible, files are moved to the system trash instead of permanently deleted, providing an additional safety net
