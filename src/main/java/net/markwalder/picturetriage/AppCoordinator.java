@@ -45,6 +45,7 @@ public class AppCoordinator {
     private final ImageScannerService scannerService = new ImageScannerService();
     private final ResultsPrinter resultsPrinter = new ResultsPrinter();
 
+    private Path selectedRootFolder;
     private List<ImageItem> scannedImages = List.of();
     private Phase1WorkflowService phase1Service;
     private QuicksortInteractiveRanker ranker;
@@ -88,6 +89,8 @@ public class AppCoordinator {
         if (selected == null) {
             return;
         }
+
+        selectedRootFolder = selected;
 
         ImageScannerService.ScanResult scanResult = scannerService.scan(selected);
         scannedImages = scanResult.images();
@@ -173,7 +176,7 @@ public class AppCoordinator {
 
         ImageItem current = phase1Service.currentImage();
         imageView.setImage(loadImage(current));
-        indexLabel.setText("Image " + (phase1Service.index() + 1) + " of " + phase1Service.total() + ": " + current.path());
+        indexLabel.setText("Image " + (phase1Service.index() + 1) + " of " + phase1Service.total() + ": " + displayPath(current));
     }
 
     private void startPhase2(ResultBundle phase1Result) {
@@ -244,7 +247,7 @@ public class AppCoordinator {
         ComparisonPair pair = ranker.currentPair().orElseThrow();
         leftView.setImage(loadImage(pair.left()));
         rightView.setImage(loadImage(pair.right()));
-        pairLabel.setText("Choose better picture: left = " + pair.left().displayName() + " | right = " + pair.right().displayName());
+        pairLabel.setText("Choose better picture: left = " + displayPath(pair.left()) + " | right = " + displayPath(pair.right()));
     }
 
     private void showResults(ResultBundle resultBundle) {
@@ -287,8 +290,22 @@ public class AppCoordinator {
             return;
         }
         for (int i = 0; i < items.size(); i++) {
-            sb.append("   ").append(i + 1).append(". ").append(items.get(i).path()).append("\n");
+            sb.append("   ").append(i + 1).append(". ").append(displayPath(items.get(i))).append("\n");
         }
+    }
+
+    private String displayPath(ImageItem item) {
+        if (selectedRootFolder == null) {
+            return item.path().toString();
+        }
+
+        Path normalizedRoot = selectedRootFolder.toAbsolutePath().normalize();
+        Path normalizedItem = item.path().toAbsolutePath().normalize();
+        if (normalizedItem.startsWith(normalizedRoot)) {
+            return normalizedRoot.relativize(normalizedItem).toString();
+        }
+
+        return item.path().toString();
     }
 
     private void configurePhase2Image(ImageView imageView) {
