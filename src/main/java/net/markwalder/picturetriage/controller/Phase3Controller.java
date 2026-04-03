@@ -31,7 +31,6 @@ public class Phase3Controller {
     private Phase3WorkflowService phase3Service;
     private Consumer<List<ImageItem>> onDeletionRequested;
     private Runnable onRestart;
-    private Runnable onCancel;
 
     public Phase3Controller(
         Stage stage,
@@ -50,12 +49,10 @@ public class Phase3Controller {
     public void start(
         ResultBundle phase2Result,
         Consumer<List<ImageItem>> onDeletionRequested,
-        Runnable onRestart,
-        Runnable onCancel
+        Runnable onRestart
     ) {
         this.onDeletionRequested = onDeletionRequested;
         this.onRestart = onRestart;
-        this.onCancel = onCancel;
         this.phase3Service = new Phase3WorkflowService(
             phase2Result.keptImages(),
             phase2Result.rankedTriageImages(),
@@ -92,14 +89,6 @@ public class Phase3Controller {
             }
         });
 
-        Button cancelButton = new Button("Cancel");
-        cancelButton.getStyleClass().add("button-primary");
-        cancelButton.setOnAction(e -> {
-            if (onCancel != null) {
-                onCancel.run();
-            }
-        });
-
         gridPane.setOnImageDecisionChanged((image, newDecision) -> {
             phase3Service.toggleDecision(image);
             updatePhase3ProgressLabel(progressLabel);
@@ -113,7 +102,7 @@ public class Phase3Controller {
             "Phase 3: Final Review",
             content,
             restartButton,
-            List.of(finishButton, cancelButton)
+            List.of(finishButton)
         );
 
         Scene scene = new Scene(root, windowWidth, windowHeight);

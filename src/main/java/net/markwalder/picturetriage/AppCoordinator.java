@@ -79,7 +79,7 @@ public class AppCoordinator {
     }
 
     private void startPhase3(ResultBundle phase2Result) {
-        phase3Controller.start(phase2Result, this::onFinishAndDelete, this::backToPhase1Start, this::showFolderSelection);
+        phase3Controller.start(phase2Result, this::onFinishAndDelete, this::backToPhase1Start);
     }
 
     private void backToPhase1Start() {

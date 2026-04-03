@@ -92,11 +92,32 @@ public class Phase1Controller {
             }
         });
 
+        Button keepButton = new Button("Keep");
+        keepButton.getStyleClass().add("button-keep");
+        keepButton.setOnAction(e -> {
+            phase1Service.applyDecision(Phase1Decision.KEEP);
+            refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
+        });
+
+        Button triageButton = new Button("Triage");
+        triageButton.getStyleClass().add("button-triage");
+        triageButton.setOnAction(e -> {
+            phase1Service.applyDecision(Phase1Decision.TRIAGE);
+            refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
+        });
+
+        Button deleteButton = new Button("Delete");
+        deleteButton.getStyleClass().add("button-delete");
+        deleteButton.setOnAction(e -> {
+            phase1Service.applyDecision(Phase1Decision.DELETE);
+            refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
+        });
+
         PhaseLayoutContainer root = new PhaseLayoutContainer(
             "Phase 1: Triage Images",
             content,
             restartButton,
-            List.<Button>of()
+            List.of(keepButton, triageButton, deleteButton)
         );
 
         Scene scene = new Scene(root, windowWidth, windowHeight);

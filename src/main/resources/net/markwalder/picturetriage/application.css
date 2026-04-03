@@ -203,6 +203,48 @@
     -fx-padding: 8px 20px;
 }
 
+.button-keep {
+    -fx-font-size: 14px;
+    -fx-padding: 8px 20px;
+    -fx-background-color: -fx-color-keep;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+.button-keep:hover {
+    -fx-background-color: #39b450;
+}
+
+.button-triage {
+    -fx-font-size: 14px;
+    -fx-padding: 8px 20px;
+    -fx-background-color: -fx-color-triage;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+.button-triage:hover {
+    -fx-background-color: #9a6cff;
+}
+
+.button-delete {
+    -fx-font-size: 14px;
+    -fx-padding: 8px 20px;
+    -fx-background-color: -fx-color-delete;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+.button-delete:hover {
+    -fx-background-color: #cf3b3b;
+}
+
 /* ============================================================================
    Grid & Layout
    ============================================================================ */

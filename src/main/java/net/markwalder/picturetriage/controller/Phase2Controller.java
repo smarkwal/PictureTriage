@@ -89,11 +89,29 @@ public class Phase2Controller {
             }
         });
 
+        Button leftButton = new Button("Left");
+        leftButton.getStyleClass().add("button-primary");
+        leftButton.setOnAction(e -> {
+            if (!ranker.isComplete()) {
+                ranker.submitChoice(ComparisonChoice.LEFT_BETTER);
+                refreshPhase2View(leftPane, rightPane, progressPane);
+            }
+        });
+
+        Button rightButton = new Button("Right");
+        rightButton.getStyleClass().add("button-primary");
+        rightButton.setOnAction(e -> {
+            if (!ranker.isComplete()) {
+                ranker.submitChoice(ComparisonChoice.RIGHT_BETTER);
+                refreshPhase2View(leftPane, rightPane, progressPane);
+            }
+        });
+
         PhaseLayoutContainer root = new PhaseLayoutContainer(
             "Phase 2: Rank Triaged Images",
             content,
             restartButton,
-            List.<Button>of()
+            List.of(leftButton, rightButton)
         );
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
