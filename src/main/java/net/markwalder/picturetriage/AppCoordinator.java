@@ -392,6 +392,7 @@ public class AppCoordinator {
         });
         
         stage.setScene(scene);
+        Platform.runLater(gridPane::selectFirstImage);
     }
 
     private void updatePhase3ProgressLabel(Label label) {

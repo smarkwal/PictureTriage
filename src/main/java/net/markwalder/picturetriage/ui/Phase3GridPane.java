@@ -33,6 +33,7 @@ public class Phase3GridPane extends VBox {
     
     // Keyboard navigation state
     private List<ImageItem> imageOrder = new ArrayList<>();
+    private Map<ImageItem, Integer> imageIndexMap = new HashMap<>();
     private int currentFocusIndex = 0;
 
     public Phase3GridPane(ImageCache imageCache) {
@@ -71,10 +72,14 @@ public class Phase3GridPane extends VBox {
         gridPane.getChildren().clear();
         thumbnailMap.clear();
         imageOrder.clear();
+        imageIndexMap.clear();
         currentFocusIndex = 0;
 
         List<ImageItem> images = state.imageDisplayOrder();
         imageOrder.addAll(images);
+        for (int i = 0; i < images.size(); i++) {
+            imageIndexMap.put(images.get(i), i);
+        }
         
         int row = 0;
         int col = 0;
@@ -85,6 +90,11 @@ public class Phase3GridPane extends VBox {
 
             // Register the callback for when this thumbnail is clicked
             thumbnail.setOnDecisionChanged((img, newDecision) -> {
+                Integer clickedIndex = imageIndexMap.get(img);
+                if (clickedIndex != null) {
+                    currentFocusIndex = clickedIndex;
+                    focusCurrentThumbnail();
+                }
                 if (onImageDecisionChanged != null) {
                     onImageDecisionChanged.accept(img, newDecision);
                 }
@@ -112,6 +122,17 @@ public class Phase3GridPane extends VBox {
                 updateFocusIndicators(firstButton);
             }
         }
+    }
+
+    /**
+     * Reset selection to the first image (top-left thumbnail).
+     */
+    public void selectFirstImage() {
+        if (imageOrder.isEmpty()) {
+            return;
+        }
+        currentFocusIndex = 0;
+        focusCurrentThumbnail();
     }
     
     /**
