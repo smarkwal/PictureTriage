@@ -14,6 +14,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -104,7 +105,13 @@ public class AppCoordinator {
         instructions.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
         Label indexLabel = new Label();
+        indexLabel.setMaxWidth(Double.MAX_VALUE);
+        indexLabel.setAlignment(Pos.CENTER);
+
         Label countsLabel = new Label();
+        countsLabel.setMaxWidth(Double.MAX_VALUE);
+        countsLabel.setAlignment(Pos.CENTER);
+
         ImageView imageView = new ImageView();
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(1000);
@@ -112,8 +119,16 @@ public class AppCoordinator {
 
         SegmentedProgressBar segmentedBar = new SegmentedProgressBar(1000, 24);
 
-        VBox root = new VBox(10, instructions, indexLabel, imageView, segmentedBar, countsLabel);
+        StackPane imageContainer = new StackPane(imageView);
+        imageContainer.setAlignment(Pos.CENTER);
+        VBox.setVgrow(imageContainer, Priority.ALWAYS);
+
+        HBox progressBarRow = new HBox(segmentedBar);
+        progressBarRow.setAlignment(Pos.CENTER);
+
+        VBox root = new VBox(10, instructions, indexLabel, imageContainer, progressBarRow, countsLabel);
         root.setPadding(new Insets(16));
+        root.setAlignment(Pos.TOP_CENTER);
 
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
         scene.setOnKeyPressed(event -> {
