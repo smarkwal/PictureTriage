@@ -113,11 +113,19 @@ public class Phase1Controller {
             refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
         });
 
+        Button nextButton = new Button("Next");
+        nextButton.getStyleClass().add("button-primary");
+        nextButton.setOnAction(e -> {
+            phase1Service.triageRemaining();
+            refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
+        });
+
         PhaseLayoutContainer root = new PhaseLayoutContainer(
             "Phase 1: Triage Images",
             content,
             restartButton,
-            List.of(keepButton, triageButton, deleteButton)
+            List.of(keepButton, triageButton, deleteButton),
+            nextButton
         );
 
         Scene scene = new Scene(root, windowWidth, windowHeight);

@@ -48,6 +48,12 @@ public class Phase1WorkflowService {
         index++;
     }
 
+    public void triageRemaining() {
+        while (!isComplete()) {
+            applyDecision(Phase1Decision.TRIAGE);
+        }
+    }
+
     public boolean isComplete() {
         return index >= images.size();
     }

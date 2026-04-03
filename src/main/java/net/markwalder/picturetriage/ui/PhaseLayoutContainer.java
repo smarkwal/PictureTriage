@@ -14,10 +14,20 @@ import javafx.scene.layout.VBox;
 
 public class PhaseLayoutContainer extends VBox {
     public PhaseLayoutContainer(String titleText, Node content, List<Button> actionButtons) {
-        this(titleText, content, null, actionButtons);
+        this(titleText, content, null, actionButtons, null);
     }
 
     public PhaseLayoutContainer(String titleText, Node content, Button leftButton, List<Button> actionButtons) {
+        this(titleText, content, leftButton, actionButtons, null);
+    }
+
+    public PhaseLayoutContainer(
+        String titleText,
+        Node content,
+        Button leftButton,
+        List<Button> actionButtons,
+        Button rightButton
+    ) {
         getStyleClass().add("phase-layout-container");
         setFillWidth(true);
 
@@ -51,6 +61,12 @@ public class PhaseLayoutContainer extends VBox {
             centerActions.getChildren().add(placeholder);
         }
         actionBar.setCenter(centerActions);
+
+        if (rightButton != null) {
+            HBox rightBox = new HBox(rightButton);
+            rightBox.setAlignment(Pos.CENTER_RIGHT);
+            actionBar.setRight(rightBox);
+        }
 
         getChildren().addAll(titleBar, contentContainer, actionBar);
         VBox.setVgrow(contentContainer, Priority.ALWAYS);
