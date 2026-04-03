@@ -35,6 +35,7 @@ public class AppCoordinator {
     private final Phase3Controller phase3Controller;
 
     private Path selectedRootFolder;
+    private List<ImageItem> scannedImages;
 
     public AppCoordinator(Stage stage, String styleSheet) {
         this.stage = stage;
@@ -61,7 +62,8 @@ public class AppCoordinator {
 
     private void onFolderScanCompleted(FolderSelectionController.FolderScanResult result) {
         selectedRootFolder = result.selectedFolder();
-        phase1Controller.start(result.images(), selectedRootFolder, this::onPhase1Completed);
+        scannedImages = result.images();
+        phase1Controller.start(result.images(), selectedRootFolder, this::onPhase1Completed, this::backToPhase1Start);
     }
 
     private void onPhase1Completed(ResultBundle phase1Result) {
@@ -73,11 +75,19 @@ public class AppCoordinator {
     }
 
     private void startPhase2(ResultBundle phase1Result) {
-        phase2Controller.start(phase1Result, selectedRootFolder, this::startPhase3);
+        phase2Controller.start(phase1Result, selectedRootFolder, this::startPhase3, this::backToPhase1Start);
     }
 
     private void startPhase3(ResultBundle phase2Result) {
-        phase3Controller.start(phase2Result, this::onFinishAndDelete, this::showFolderSelection);
+        phase3Controller.start(phase2Result, this::onFinishAndDelete, this::backToPhase1Start, this::showFolderSelection);
+    }
+
+    private void backToPhase1Start() {
+        if (scannedImages == null || selectedRootFolder == null) {
+            showFolderSelection();
+            return;
+        }
+        phase1Controller.start(scannedImages, selectedRootFolder, this::onPhase1Completed, this::backToPhase1Start);
     }
 
     private void onFinishAndDelete(List<ImageItem> imagesToDelete) {

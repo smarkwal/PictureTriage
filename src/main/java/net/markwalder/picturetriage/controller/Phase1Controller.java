@@ -32,6 +32,7 @@ public class Phase1Controller {
 
     private Phase1WorkflowService phase1Service;
     private Consumer<ResultBundle> onCompleted;
+    private Runnable onRestart;
     private Path selectedRootFolder;
 
     public Phase1Controller(
@@ -48,10 +49,16 @@ public class Phase1Controller {
         this.imageCache = imageCache;
     }
 
-    public void start(List<ImageItem> images, Path selectedRootFolder, Consumer<ResultBundle> onCompleted) {
+    public void start(
+        List<ImageItem> images,
+        Path selectedRootFolder,
+        Consumer<ResultBundle> onCompleted,
+        Runnable onRestart
+    ) {
         this.phase1Service = new Phase1WorkflowService(images);
         this.selectedRootFolder = selectedRootFolder;
         this.onCompleted = onCompleted;
+        this.onRestart = onRestart;
         showPhase1();
     }
 
@@ -66,7 +73,7 @@ public class Phase1Controller {
         countsLabel.setAlignment(Pos.CENTER);
         countsLabel.getStyleClass().add("label-body");
 
-        ImageDisplayPane imagePane = new ImageDisplayPane(1000, 620, imageCache, selectedRootFolder);
+        ImageDisplayPane imagePane = new ImageDisplayPane(1000, 560, imageCache, selectedRootFolder);
 
         BlockProgressBar blockProgressBar = new BlockProgressBar(phase1Service.total(), 1000, 24);
         VBox.setVgrow(imagePane, Priority.ALWAYS);
@@ -77,15 +84,24 @@ public class Phase1Controller {
         VBox content = new VBox(10, indexLabel, imagePane, progressBarRow, countsLabel);
         content.setAlignment(Pos.TOP_CENTER);
 
+        Button restartButton = new Button("Restart");
+        restartButton.getStyleClass().add("button-primary");
+        restartButton.setOnAction(e -> {
+            if (onRestart != null) {
+                onRestart.run();
+            }
+        });
+
         PhaseLayoutContainer root = new PhaseLayoutContainer(
             "Phase 1: Triage Images",
             content,
+            restartButton,
             List.<Button>of()
         );
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
         scene.getStylesheets().add(styleSheet);
-        scene.setOnKeyPressed(event -> {
+        scene.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
             KeyCode code = event.getCode();
             switch (code) {
                 case UP -> phase1Service.applyDecision(Phase1Decision.KEEP);
@@ -96,6 +112,7 @@ public class Phase1Controller {
                 }
             }
             refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
+            event.consume();
         });
 
         stage.setScene(scene);

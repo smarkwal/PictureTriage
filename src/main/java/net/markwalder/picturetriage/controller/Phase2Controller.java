@@ -31,6 +31,7 @@ public class Phase2Controller {
 
     private QuicksortInteractiveRanker ranker;
     private Consumer<ResultBundle> onCompleted;
+    private Runnable onRestart;
     private Path selectedRootFolder;
     private ResultBundle phase1Result;
 
@@ -48,18 +49,24 @@ public class Phase2Controller {
         this.imageCache = imageCache;
     }
 
-    public void start(ResultBundle phase1Result, Path selectedRootFolder, Consumer<ResultBundle> onCompleted) {
+    public void start(
+        ResultBundle phase1Result,
+        Path selectedRootFolder,
+        Consumer<ResultBundle> onCompleted,
+        Runnable onRestart
+    ) {
         this.phase1Result = phase1Result;
         this.selectedRootFolder = selectedRootFolder;
         this.onCompleted = onCompleted;
+        this.onRestart = onRestart;
         this.ranker = new QuicksortInteractiveRanker();
         this.ranker.start(phase1Result.rankedTriageImages());
         showPhase2();
     }
 
     private void showPhase2() {
-        ImageDisplayPane leftPane = new ImageDisplayPane(560, 620, imageCache, selectedRootFolder);
-        ImageDisplayPane rightPane = new ImageDisplayPane(560, 620, imageCache, selectedRootFolder);
+        ImageDisplayPane leftPane = new ImageDisplayPane(560, 560, imageCache, selectedRootFolder);
+        ImageDisplayPane rightPane = new ImageDisplayPane(560, 560, imageCache, selectedRootFolder);
         leftPane.setCursor(javafx.scene.Cursor.HAND);
         rightPane.setCursor(javafx.scene.Cursor.HAND);
         int totalImageCount = phase1Result.keptImages().size()
@@ -74,15 +81,24 @@ public class Phase2Controller {
 
         VBox content = new VBox(10, compareRow, progressPane);
 
+        Button restartButton = new Button("Restart");
+        restartButton.getStyleClass().add("button-primary");
+        restartButton.setOnAction(e -> {
+            if (onRestart != null) {
+                onRestart.run();
+            }
+        });
+
         PhaseLayoutContainer root = new PhaseLayoutContainer(
             "Phase 2: Rank Triaged Images",
             content,
+            restartButton,
             List.<Button>of()
         );
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
         scene.getStylesheets().add(styleSheet);
-        scene.setOnKeyPressed(event -> {
+        scene.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
             if (ranker.isComplete()) {
                 return;
             }
@@ -95,6 +111,7 @@ public class Phase2Controller {
                 }
             }
             refreshPhase2View(leftPane, rightPane, progressPane);
+            event.consume();
         });
 
         leftPane.setOnMouseClicked(event -> {

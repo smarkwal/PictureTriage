@@ -30,6 +30,7 @@ public class Phase3Controller {
 
     private Phase3WorkflowService phase3Service;
     private Consumer<List<ImageItem>> onDeletionRequested;
+    private Runnable onRestart;
     private Runnable onCancel;
 
     public Phase3Controller(
@@ -49,9 +50,11 @@ public class Phase3Controller {
     public void start(
         ResultBundle phase2Result,
         Consumer<List<ImageItem>> onDeletionRequested,
+        Runnable onRestart,
         Runnable onCancel
     ) {
         this.onDeletionRequested = onDeletionRequested;
+        this.onRestart = onRestart;
         this.onCancel = onCancel;
         this.phase3Service = new Phase3WorkflowService(
             phase2Result.keptImages(),
@@ -81,6 +84,14 @@ public class Phase3Controller {
             }
         });
 
+        Button restartButton = new Button("Restart");
+        restartButton.getStyleClass().add("button-primary");
+        restartButton.setOnAction(e -> {
+            if (onRestart != null) {
+                onRestart.run();
+            }
+        });
+
         Button cancelButton = new Button("Cancel");
         cancelButton.getStyleClass().add("button-primary");
         cancelButton.setOnAction(e -> {
@@ -101,6 +112,7 @@ public class Phase3Controller {
         PhaseLayoutContainer root = new PhaseLayoutContainer(
             "Phase 3: Final Review",
             content,
+            restartButton,
             List.of(finishButton, cancelButton)
         );
 

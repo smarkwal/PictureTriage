@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -13,6 +14,10 @@ import javafx.scene.layout.VBox;
 
 public class PhaseLayoutContainer extends VBox {
     public PhaseLayoutContainer(String titleText, Node content, List<Button> actionButtons) {
+        this(titleText, content, null, actionButtons);
+    }
+
+    public PhaseLayoutContainer(String titleText, Node content, Button leftButton, List<Button> actionButtons) {
         getStyleClass().add("phase-layout-container");
         setFillWidth(true);
 
@@ -27,16 +32,25 @@ public class PhaseLayoutContainer extends VBox {
         contentContainer.getStyleClass().add("phase-layout-content");
         VBox.setVgrow(contentContainer, Priority.ALWAYS);
 
-        HBox actionBar = new HBox(10);
+        BorderPane actionBar = new BorderPane();
         actionBar.getStyleClass().add("phase-layout-action-bar");
-        actionBar.setAlignment(Pos.CENTER);
+
+        if (leftButton != null) {
+            HBox leftBox = new HBox(leftButton);
+            leftBox.setAlignment(Pos.CENTER_LEFT);
+            actionBar.setLeft(leftBox);
+        }
+
+        HBox centerActions = new HBox(10);
+        centerActions.setAlignment(Pos.CENTER);
         if (actionButtons != null && !actionButtons.isEmpty()) {
-            actionBar.getChildren().addAll(actionButtons);
+            centerActions.getChildren().addAll(actionButtons);
         } else {
             Region placeholder = new Region();
             placeholder.setMinWidth(1);
-            actionBar.getChildren().add(placeholder);
+            centerActions.getChildren().add(placeholder);
         }
+        actionBar.setCenter(centerActions);
 
         getChildren().addAll(titleBar, contentContainer, actionBar);
         VBox.setVgrow(contentContainer, Priority.ALWAYS);
