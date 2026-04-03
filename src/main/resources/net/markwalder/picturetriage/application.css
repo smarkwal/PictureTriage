@@ -238,6 +238,43 @@
     -fx-padding: 2px;
     -fx-cursor: hand;
 }
+.image-display-pane {
+    -fx-background-color: #454545;
+    -fx-border-color: #545454;
+    -fx-border-width: 2px;
+    -fx-background-radius: 24px;
+    -fx-border-radius: 24px;
+}
+
+.image-display-image-area {
+    -fx-background-color: #2f2f2f;
+    -fx-background-radius: 22px 22px 0 0;
+    -fx-alignment: center;
+}
+
+.image-display-footer {
+    -fx-background-color: #454545;
+    -fx-background-radius: 0 0 22px 22px;
+    -fx-padding: 12px 18px 14px 18px;
+}
+
+.image-display-path,
+.image-display-meta,
+.image-display-placeholder {
+    -fx-text-fill: #f4f4f4;
+}
+
+.image-display-path {
+    -fx-text-overrun: leading-ellipsis;
+}
+
+.image-display-meta {
+    -fx-alignment: center-right;
+}
+
+.image-display-placeholder {
+    -fx-text-fill: #d3d3d3;
+}
 
 .thumbnail-image-placeholder {
     -fx-fill: -fx-color-placeholder-bg;

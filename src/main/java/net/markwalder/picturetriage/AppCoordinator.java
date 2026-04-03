@@ -11,20 +11,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.domain.Phase1Decision;
-import net.markwalder.picturetriage.domain.Phase3Decision;
 import net.markwalder.picturetriage.domain.ResultBundle;
 import net.markwalder.picturetriage.service.ComparisonChoice;
 import net.markwalder.picturetriage.service.ComparisonPair;
@@ -36,17 +31,14 @@ import net.markwalder.picturetriage.service.Phase3WorkflowService;
 import net.markwalder.picturetriage.service.QuicksortInteractiveRanker;
 import net.markwalder.picturetriage.service.ResultsPrinter;
 import net.markwalder.picturetriage.ui.DeleteConfirmationDialog;
+import net.markwalder.picturetriage.ui.ImageDisplayPane;
 import net.markwalder.picturetriage.ui.Phase3GridPane;
 import net.markwalder.picturetriage.ui.QuicksortProgressPane;
 import net.markwalder.picturetriage.ui.SegmentedProgressBar;
 import net.markwalder.picturetriage.util.StringUtils;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Locale;
-import javax.imageio.ImageIO;
 
 public class AppCoordinator {
     private static final double WINDOW_WIDTH = 1200;
@@ -185,21 +177,15 @@ public class AppCoordinator {
         countsLabel.setAlignment(Pos.CENTER);
         countsLabel.getStyleClass().add("label-body");
 
-        ImageView imageView = new ImageView();
-        imageView.setPreserveRatio(true);
-        imageView.setFitWidth(1000);
-        imageView.setFitHeight(620);
+        ImageDisplayPane imagePane = new ImageDisplayPane(1000, 620, imageCache, selectedRootFolder);
 
         SegmentedProgressBar segmentedBar = new SegmentedProgressBar(1000, 24);
-
-        StackPane imageContainer = new StackPane(imageView);
-        imageContainer.getStyleClass().add("image-container");
-        VBox.setVgrow(imageContainer, Priority.ALWAYS);
+        VBox.setVgrow(imagePane, Priority.ALWAYS);
 
         HBox progressBarRow = new HBox(segmentedBar);
         progressBarRow.setAlignment(Pos.CENTER);
 
-        VBox root = new VBox(10, instructions, indexLabel, imageContainer, progressBarRow, countsLabel);
+        VBox root = new VBox(10, instructions, indexLabel, imagePane, progressBarRow, countsLabel);
         root.setPadding(new Insets(16));
         root.setAlignment(Pos.TOP_CENTER);
 
@@ -216,14 +202,19 @@ public class AppCoordinator {
             } else {
                 return;
             }
-            refreshPhase1View(imageView, indexLabel, countsLabel, segmentedBar);
+            refreshPhase1View(imagePane, indexLabel, countsLabel, segmentedBar);
         });
 
         stage.setScene(scene);
-        refreshPhase1View(imageView, indexLabel, countsLabel, segmentedBar);
+        refreshPhase1View(imagePane, indexLabel, countsLabel, segmentedBar);
     }
 
-    private void refreshPhase1View(ImageView imageView, Label indexLabel, Label countsLabel, SegmentedProgressBar segmentedBar) {
+    private void refreshPhase1View(
+        ImageDisplayPane imagePane,
+        Label indexLabel,
+        Label countsLabel,
+        SegmentedProgressBar segmentedBar
+    ) {
         var progress = phase1Service.progress();
         segmentedBar.update(progress.decisionTimeline(), progress.totalImages());
         countsLabel.setText(String.format(
@@ -246,8 +237,8 @@ public class AppCoordinator {
         }
 
         ImageItem current = phase1Service.currentImage();
-        imageView.setImage(loadImage(current));
-        indexLabel.setText("Image " + (phase1Service.index() + 1) + " of " + phase1Service.total() + ": " + displayPath(current));
+        imagePane.setImageItem(current);
+        indexLabel.setText("Image " + (phase1Service.index() + 1) + " of " + phase1Service.total());
     }
 
     private void startPhase2(ResultBundle phase1Result) {
@@ -260,23 +251,18 @@ public class AppCoordinator {
         Label instructions = new Label("Phase 2: Left = left image is better, Right = right image is better");
         instructions.getStyleClass().add("label-instructions");
 
-        ImageView leftView = new ImageView();
-        ImageView rightView = new ImageView();
-        configurePhase2Image(leftView);
-        configurePhase2Image(rightView);
-        leftView.setCursor(javafx.scene.Cursor.HAND);
-        rightView.setCursor(javafx.scene.Cursor.HAND);
-
-        Label pairLabel = new Label();
-        pairLabel.getStyleClass().add("label-body");
+        ImageDisplayPane leftPane = new ImageDisplayPane(560, 620, imageCache, selectedRootFolder);
+        ImageDisplayPane rightPane = new ImageDisplayPane(560, 620, imageCache, selectedRootFolder);
+        leftPane.setCursor(javafx.scene.Cursor.HAND);
+        rightPane.setCursor(javafx.scene.Cursor.HAND);
         QuicksortProgressPane progressPane = new QuicksortProgressPane();
 
-        HBox compareRow = new HBox(12, leftView, rightView);
+        HBox compareRow = new HBox(12, leftPane, rightPane);
         compareRow.setAlignment(Pos.CENTER);
-        HBox.setHgrow(leftView, Priority.ALWAYS);
-        HBox.setHgrow(rightView, Priority.ALWAYS);
+        HBox.setHgrow(leftPane, Priority.ALWAYS);
+        HBox.setHgrow(rightPane, Priority.ALWAYS);
 
-        VBox root = new VBox(10, instructions, pairLabel, compareRow, progressPane);
+        VBox root = new VBox(10, instructions, compareRow, progressPane);
         root.setPadding(new Insets(16));
 
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -293,31 +279,30 @@ public class AppCoordinator {
             } else {
                 return;
             }
-            refreshPhase2View(leftView, rightView, pairLabel, progressPane, phase1Result);
+            refreshPhase2View(leftPane, rightPane, progressPane, phase1Result);
         });
 
-        leftView.setOnMouseClicked(event -> {
+        leftPane.setOnMouseClicked(event -> {
             if (!ranker.isComplete()) {
                 ranker.submitChoice(ComparisonChoice.LEFT_BETTER);
-                refreshPhase2View(leftView, rightView, pairLabel, progressPane, phase1Result);
+                refreshPhase2View(leftPane, rightPane, progressPane, phase1Result);
             }
         });
 
-        rightView.setOnMouseClicked(event -> {
+        rightPane.setOnMouseClicked(event -> {
             if (!ranker.isComplete()) {
                 ranker.submitChoice(ComparisonChoice.RIGHT_BETTER);
-                refreshPhase2View(leftView, rightView, pairLabel, progressPane, phase1Result);
+                refreshPhase2View(leftPane, rightPane, progressPane, phase1Result);
             }
         });
 
         stage.setScene(scene);
-        refreshPhase2View(leftView, rightView, pairLabel, progressPane, phase1Result);
+        refreshPhase2View(leftPane, rightPane, progressPane, phase1Result);
     }
 
     private void refreshPhase2View(
-        ImageView leftView,
-        ImageView rightView,
-        Label pairLabel,
+        ImageDisplayPane leftPane,
+        ImageDisplayPane rightPane,
         QuicksortProgressPane progressPane,
         ResultBundle phase1Result
     ) {
@@ -334,9 +319,8 @@ public class AppCoordinator {
         }
 
         ComparisonPair pair = ranker.currentPair().orElseThrow();
-        leftView.setImage(loadImage(pair.left()));
-        rightView.setImage(loadImage(pair.right()));
-        pairLabel.setText("Choose better image: left = " + displayPath(pair.left()) + " | right = " + displayPath(pair.right()));
+        leftPane.setImageItem(pair.left());
+        rightPane.setImageItem(pair.right());
     }
 
     private void startPhase3(ResultBundle phase2Result) {
@@ -578,22 +562,6 @@ public class AppCoordinator {
         return item.path().toString();
     }
 
-    private void configurePhase2Image(ImageView imageView) {
-        imageView.setPreserveRatio(true);
-        imageView.setFitWidth(560);
-        imageView.setFitHeight(620);
-    }
-
-    private Image loadImage(ImageItem item) {
-        // Check cache first
-        Image cachedImage = imageCache.get(item.path());
-        if (cachedImage != null) {
-            return cachedImage;
-        }
-        // Return null if not in cache and not loadable (imageCache returned null for failed load)
-        return null;
-    }
-
     private void showInfo(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -603,5 +571,4 @@ public class AppCoordinator {
         alert.getDialogPane().getStyleClass().add("app-dialog");
         alert.showAndWait();
     }
-
 }
