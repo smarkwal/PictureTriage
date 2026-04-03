@@ -1,6 +1,7 @@
 package net.markwalder.picturetriage.service;
 
 import net.markwalder.picturetriage.domain.ImageItem;
+import net.markwalder.picturetriage.util.StringUtils;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -69,11 +70,11 @@ public class ImageDeleteService {
                         deletedCount++;
                     } else {
                         failedDeletions.add(new DeleteResult.FailedDeletion(path,
-                                "Could not move file to OS trash."));
+                                "Could not move image to OS trash."));
                     }
                 } catch (RuntimeException e) {
                     String reason = formatReason(e);
-                    System.err.println("Failed to move file to trash (file kept): " + path + " - " + reason);
+                    System.err.println("Failed to move image to trash (image kept): " + path + " - " + reason);
                     failedDeletions.add(new DeleteResult.FailedDeletion(path, reason));
                 }
                 continue;
@@ -99,10 +100,12 @@ public class ImageDeleteService {
      */
     public static String formatResult(DeleteResult result) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Removed: ").append(result.deletedCount).append(" file(s)");
+        sb.append("Removed: ").append(result.deletedCount).append(" ")
+            .append(StringUtils.pluralize(result.deletedCount, "image", "images"));
 
         if (result.failedCount > 0) {
-            sb.append("\n\nFailed to remove ").append(result.failedCount).append(" file(s):");
+            sb.append("\n\nFailed to remove ").append(result.failedCount).append(" ")
+                .append(StringUtils.pluralize(result.failedCount, "image", "images")).append(":");
             for (DeleteResult.FailedDeletion failure : result.failedDeletions) {
                 sb.append("\n  • ").append(failure.filePath()).append("\n    ")
                         .append(failure.reason());

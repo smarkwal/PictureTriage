@@ -4,6 +4,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
+import net.markwalder.picturetriage.util.StringUtils;
 
 /**
  * Confirmation dialog for Phase 3 deletion.
@@ -20,11 +21,13 @@ public class DeleteConfirmationDialog {
      * @return true if user confirmed, false if cancelled
      */
     public static boolean showConfirmation(int deleteCount, Stage owner) {
+        String imageLabel = StringUtils.pluralize(deleteCount, "image", "images");
+
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirm Deletion");
-        alert.setHeaderText("Delete " + deleteCount + " Image(s)?");
+        alert.setHeaderText("Delete " + deleteCount + " " + imageLabel + "?");
         alert.setContentText(
-                "You are about to permanently delete " + deleteCount + " image(s).\n\n" +
+            "You are about to delete " + deleteCount + " " + imageLabel + ".\n\n" +
             "Are you sure?"
         );
         alert.initOwner(owner);

@@ -34,6 +34,7 @@ import net.markwalder.picturetriage.ui.DeleteConfirmationDialog;
 import net.markwalder.picturetriage.ui.Phase3GridPane;
 import net.markwalder.picturetriage.ui.QuicksortProgressPane;
 import net.markwalder.picturetriage.ui.SegmentedProgressBar;
+import net.markwalder.picturetriage.util.StringUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -70,7 +71,7 @@ public class AppCoordinator {
         Label title = new Label("Picture Triage");
         title.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;");
 
-        Label details = new Label("Select a folder to recursively scan JPG, JPEG, PNG, and WEBP files.");
+        Label details = new Label("Select a folder to recursively scan JPG, JPEG, PNG, and WEBP images.");
         Button selectButton = new Button("Select Folder");
         selectButton.setOnAction(e -> selectFolder());
 
@@ -83,7 +84,7 @@ public class AppCoordinator {
 
     private void selectFolder() {
         DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Select Picture Folder");
+        chooser.setTitle("Select Image Folder");
         Path selected = null;
         if (stage.getScene() != null && stage.getScene().getWindow() != null) {
             var file = chooser.showDialog(stage);
@@ -101,7 +102,7 @@ public class AppCoordinator {
         ImageScannerService.ScanResult scanResult = scannerService.scan(selected);
         scannedImages = scanResult.images();
         if (scannedImages.isEmpty()) {
-            showInfo("No images found", "No supported image files were found in this folder.");
+            showInfo("No images found", "No supported images were found in this folder.");
             return;
         }
 
@@ -192,7 +193,7 @@ public class AppCoordinator {
     }
 
     private void showPhase2(ResultBundle phase1Result) {
-        Label instructions = new Label("Phase 2: Left = left picture is better, Right = right picture is better");
+        Label instructions = new Label("Phase 2: Left = left image is better, Right = right image is better");
         instructions.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
         ImageView leftView = new ImageView();
@@ -253,7 +254,7 @@ public class AppCoordinator {
         ComparisonPair pair = ranker.currentPair().orElseThrow();
         leftView.setImage(loadImage(pair.left()));
         rightView.setImage(loadImage(pair.right()));
-        pairLabel.setText("Choose better picture: left = " + displayPath(pair.left()) + " | right = " + displayPath(pair.right()));
+        pairLabel.setText("Choose better image: left = " + displayPath(pair.left()) + " | right = " + displayPath(pair.right()));
     }
 
     private void startPhase3(ResultBundle phase2Result) {
@@ -370,9 +371,11 @@ public class AppCoordinator {
         // Add deletion summary if applicable
         if (deleteResult != null && deleteResult.deletedCount() > 0) {
             resultsText.append("=== DELETION RESULTS ===\n");
-            resultsText.append("Successfully removed: ").append(deleteResult.deletedCount()).append(" file(s)\n");
+            resultsText.append("Successfully removed: ").append(deleteResult.deletedCount()).append(" ")
+                .append(StringUtils.pluralize(deleteResult.deletedCount(), "image", "images")).append("\n");
             if (deleteResult.failedCount() > 0) {
-                resultsText.append("Failed to remove: ").append(deleteResult.failedCount()).append(" file(s)\n");
+                resultsText.append("Failed to remove: ").append(deleteResult.failedCount()).append(" ")
+                    .append(StringUtils.pluralize(deleteResult.failedCount(), "image", "images")).append("\n");
             }
             resultsText.append("\n");
         }
@@ -466,4 +469,5 @@ public class AppCoordinator {
         alert.setContentText(content);
         alert.showAndWait();
     }
+
 }

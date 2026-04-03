@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ResultsPrinter {
     public void print(ResultBundle result, PrintStream out) {
-        out.println("Final picture order:");
+        out.println("Final image order:");
         out.println("1) Kept in phase 1");
         printList(result.keptImages(), out);
         out.println();
