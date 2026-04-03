@@ -75,6 +75,7 @@ public class Phase3Controller {
 
         Button finishButton = new Button("Finish & Delete");
         finishButton.getStyleClass().add("button-primary");
+        updateFinishButtonState(finishButton);
         finishButton.setOnAction(e -> {
             if (onDeletionRequested != null) {
                 onDeletionRequested.accept(phase3Service.getImagesToDelete());
@@ -93,6 +94,7 @@ public class Phase3Controller {
             phase3Service.toggleDecision(image);
             updatePhase3ProgressLabel(progressLabel);
             updatePhase3MiniMap(phase3MiniMap, gridPane.getCurrentFocusIndex());
+            updateFinishButtonState(finishButton);
         });
 
         VBox content = new VBox(10, gridPane, phase3MiniMap, progressLabel);
@@ -158,5 +160,9 @@ public class Phase3Controller {
             },
             blockIndex -> blockIndex == selectedIndex
         );
+    }
+
+    private void updateFinishButtonState(Button finishButton) {
+        finishButton.setDisable(phase3Service.snapshot().progress().deleteCount() == 0);
     }
 }
