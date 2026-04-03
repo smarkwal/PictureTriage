@@ -8,7 +8,7 @@ repositories {
 }
 
 javafx {
-    version = "21.0.2"
+    version = "25.0.1"
     modules = listOf("javafx.controls", "javafx.swing")
 }
 
