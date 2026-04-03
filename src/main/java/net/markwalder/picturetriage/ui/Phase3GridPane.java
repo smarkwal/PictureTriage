@@ -308,19 +308,6 @@ public class Phase3GridPane extends VBox {
     }
 
     /**
-     * Update the decision for a specific image thumbnail.
-     * 
-     * @param image the image to update
-     * @param decision the new decision
-     */
-    public void updateImageDecision(ImageItem image, Phase3Decision decision) {
-        ImageThumbnailButton thumbnail = thumbnailMap.get(image);
-        if (thumbnail != null) {
-            thumbnail.setDecision(decision);
-        }
-    }
-
-    /**
      * Register a callback to be invoked when any thumbnail decision is changed.
      * The callback receives the image and the new decision.
      * 

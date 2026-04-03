@@ -20,14 +20,4 @@ public record Phase3Progress(
             throw new IllegalArgumentException("keepCount + deleteCount must not exceed totalImages");
         }
     }
-
-    /**
-     * Returns the fraction of decisions made (0.0 to 1.0).
-     */
-    public double progressFraction() {
-        if (totalImages == 0) {
-            return 1.0;
-        }
-        return (double) (keepCount + deleteCount) / totalImages;
-    }
 }

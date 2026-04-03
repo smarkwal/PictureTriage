@@ -31,14 +31,4 @@ public record Phase3GridState(
     public Phase3Decision getDecision(ImageItem image) {
         return decisions.get(image);
     }
-
-    /**
-     * Returns the border color for an image based on its decision.
-     * @param image the image to evaluate
-     * @return "green" for KEEP, "red" for DELETE
-     */
-    public String getBorderColor(ImageItem image) {
-        Phase3Decision decision = getDecision(image);
-        return decision == Phase3Decision.KEEP ? "green" : "red";
-    }
 }

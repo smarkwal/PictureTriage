@@ -3,12 +3,15 @@ package net.markwalder.picturetriage;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+@SuppressWarnings("unused")
 public class PictureTriageApplication extends Application {
+    @SuppressWarnings("unused")
     public static void launchApp(String[] args) {
         launch(args);
     }
 
     @Override
+    @SuppressWarnings("unused")
     public void start(Stage primaryStage) {
         AppCoordinator coordinator = new AppCoordinator(primaryStage, getApplicationStylesheet());
         coordinator.begin();

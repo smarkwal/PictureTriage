@@ -1,5 +1,17 @@
 package net.markwalder.picturetriage.ui;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -14,17 +26,6 @@ import javafx.scene.layout.VBox;
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.service.ImageCache;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import javax.imageio.ImageIO;
-
 public class ImageDisplayPane extends VBox {
     private static final double IMAGE_AREA_PADDING = 20.0;
     private static final double FOOTER_HEIGHT = 74.0;
@@ -38,7 +39,7 @@ public class ImageDisplayPane extends VBox {
     private final Label dimensionsLabel = new Label();
     private final Label fileSizeLabel = new Label();
 
-    private Path displayRoot;
+    private final Path displayRoot;
     private ImageItem imageItem;
 
     public ImageDisplayPane(double cardWidth, double cardHeight, ImageCache imageCache, Path displayRoot) {
@@ -97,11 +98,6 @@ public class ImageDisplayPane extends VBox {
         setPrefHeight(cardHeight);
         setMinHeight(Region.USE_PREF_SIZE);
         setMaxHeight(Region.USE_PREF_SIZE);
-    }
-
-    public void setDisplayRoot(Path displayRoot) {
-        this.displayRoot = displayRoot;
-        refreshMetadata();
     }
 
     public void setImageItem(ImageItem imageItem) {

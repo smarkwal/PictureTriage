@@ -33,13 +33,6 @@ public class ImageDeleteService {
          */
         public record FailedDeletion(Path filePath, String reason) {
         }
-
-        /**
-         * Check if all removals succeeded.
-         */
-        public boolean allSucceeded() {
-            return failedCount == 0;
-        }
     }
 
     /**

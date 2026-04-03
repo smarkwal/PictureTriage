@@ -1,7 +1,5 @@
 package net.markwalder.picturetriage.service;
 
-import net.markwalder.picturetriage.domain.ImageItem;
-
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
@@ -14,6 +12,8 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
+
+import net.markwalder.picturetriage.domain.ImageItem;
 
 public class ImageScannerService {
     public ScanResult scan(Path rootFolder) {
@@ -55,6 +55,7 @@ public class ImageScannerService {
         }
 
         @Override
+        @SuppressWarnings("unused")
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
             try {
                 if (isSupportedImage(file)) {
@@ -72,6 +73,7 @@ public class ImageScannerService {
         }
 
         @Override
+        @SuppressWarnings("unused")
         public FileVisitResult visitFileFailed(Path file, IOException exc) {
             // Log the error but continue scanning other files
             System.err.println("Failed to access: " + file + " - " + exc.getMessage());
@@ -80,6 +82,7 @@ public class ImageScannerService {
         }
 
         @Override
+        @SuppressWarnings("unused")
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
             try {
                 if (!Files.isReadable(dir)) {

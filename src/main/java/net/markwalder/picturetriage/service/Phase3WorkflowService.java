@@ -1,14 +1,14 @@
 package net.markwalder.picturetriage.service;
 
-import net.markwalder.picturetriage.domain.ImageItem;
-import net.markwalder.picturetriage.domain.Phase3Decision;
-import net.markwalder.picturetriage.domain.Phase3GridState;
-import net.markwalder.picturetriage.domain.Phase3Progress;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.markwalder.picturetriage.domain.ImageItem;
+import net.markwalder.picturetriage.domain.Phase3Decision;
+import net.markwalder.picturetriage.domain.Phase3GridState;
+import net.markwalder.picturetriage.domain.Phase3Progress;
 
 /**
  * Manages the Phase 3 workflow: final review and decision toggle for all images.
@@ -20,7 +20,6 @@ import java.util.Map;
 public class Phase3WorkflowService {
     private final List<ImageItem> displayOrder;
     private final Map<ImageItem, Phase3Decision> decisions;
-    private final Map<ImageItem, Phase3Decision> originalDecisions;
 
     /**
      * Initialize Phase 3 with all images from previous phases.
@@ -41,7 +40,6 @@ public class Phase3WorkflowService {
 
         // Initialize decisions: kept/triaged → KEEP, deleted → DELETE
         this.decisions = new HashMap<>();
-        this.originalDecisions = new HashMap<>();
 
         for (ImageItem item : keptImages) {
             decisions.put(item, Phase3Decision.KEEP);
@@ -52,9 +50,6 @@ public class Phase3WorkflowService {
         for (ImageItem item : deletedImages) {
             decisions.put(item, Phase3Decision.DELETE);
         }
-
-        // Track original decisions for comparison
-        originalDecisions.putAll(decisions);
     }
 
     /**
@@ -102,31 +97,6 @@ public class Phase3WorkflowService {
         return displayOrder.stream()
                 .filter(image -> decisions.get(image) == Phase3Decision.DELETE)
                 .toList();
-    }
-
-    /**
-     * Get the list of images marked for keeping.
-     * 
-     * @return list of images with KEEP decision
-     */
-    public List<ImageItem> getImagesToKeep() {
-        return displayOrder.stream()
-                .filter(image -> decisions.get(image) == Phase3Decision.KEEP)
-                .toList();
-    }
-
-    /**
-     * Check if any decisions have been modified from their original values.
-     * 
-     * @return true if at least one decision differs from original
-     */
-    public boolean isModified() {
-        for (ImageItem image : displayOrder) {
-            if (!decisions.get(image).equals(originalDecisions.get(image))) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

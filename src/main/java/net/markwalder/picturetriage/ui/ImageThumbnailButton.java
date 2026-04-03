@@ -1,5 +1,7 @@
 package net.markwalder.picturetriage.ui;
 
+import java.util.function.BiConsumer;
+
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,8 +14,6 @@ import javafx.scene.paint.Color;
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.domain.Phase3Decision;
 import net.markwalder.picturetriage.service.ImageCache;
-
-import java.util.function.BiConsumer;
 
 /**
  * A clickable thumbnail button for Phase 3 grid display.
@@ -132,28 +132,6 @@ public class ImageThumbnailButton extends StackPane {
      */
     public void setFocusIndicator(boolean focused) {
         this.hasFocusIndicator = focused;
-        updateBorder();
-    }
-
-    /**
-     * Get the associated image item.
-     */
-    public ImageItem getImageItem() {
-        return imageItem;
-    }
-
-    /**
-     * Get the current decision for this image.
-     */
-    public Phase3Decision getCurrentDecision() {
-        return currentDecision;
-    }
-
-    /**
-     * Set the current decision externally (for synchronization from service).
-     */
-    public void setDecision(Phase3Decision decision) {
-        this.currentDecision = decision;
         updateBorder();
     }
 
