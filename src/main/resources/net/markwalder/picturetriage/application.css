@@ -74,10 +74,6 @@
     -fx-padding: 8px 20px;
 }
 
-.button-standard {
-    -fx-font-size: 14px;
-}
-
 /* ============================================================================
    Grid & Layout
    ============================================================================ */
@@ -103,58 +99,8 @@
     -fx-cursor: hand;
 }
 
-.thumbnail-button-keep {
-    -fx-border-color: -fx-color-keep;
-    -fx-border-width: -fx-size-thumbnail-border;
-    -fx-border-radius: 4;
-}
-
-.thumbnail-button-delete {
-    -fx-border-color: -fx-color-delete;
-    -fx-border-width: -fx-size-thumbnail-border;
-    -fx-border-radius: 4;
-}
-
-/* When a thumbnail has keyboard focus, reduce padding so border appears to grow inward */
-.thumbnail-button-focused {
-    -fx-padding: 0px;
-}
-
 .thumbnail-image-placeholder {
     -fx-fill: -fx-color-placeholder-bg;
-}
-
-/* ============================================================================
-   Progress Indicators
-   ============================================================================ */
-
-.progress-bar-segment {
-    /* Used for SegmentedProgressBar custom rendering */
-    -fx-fill: -fx-color-neutral;
-}
-
-.progress-bar-segment-keep {
-    -fx-fill: -fx-color-keep;
-}
-
-.progress-bar-segment-triage {
-    -fx-fill: -fx-color-triage;
-}
-
-.progress-bar-segment-delete {
-    -fx-fill: -fx-color-delete;
-}
-
-.progress-bar-border {
-    -fx-stroke: -fx-color-border-dark;
-}
-
-/* ============================================================================
-   Dialogs & Alerts
-   ============================================================================ */
-
-.dialog-pref-width {
-    -fx-pref-width: 500px;
 }
 
 /* ============================================================================
