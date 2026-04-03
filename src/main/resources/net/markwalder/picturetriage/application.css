@@ -1,0 +1,173 @@
+/* ============================================================================
+   PictureTriage Application Stylesheet
+   ============================================================================ */
+
+/* ============================================================================
+   Colors & Token Definitions
+   ============================================================================ */
+
+.root {
+    /* Primary Colors */
+    -fx-color-keep: #2e9f44;
+    -fx-color-triage: #d8b400;
+    -fx-color-delete: #bf2f2f;
+    -fx-color-neutral: #d7d7d7;
+    -fx-color-border-dark: #666666;
+    -fx-color-text-secondary: #555555;
+    -fx-color-border-light: #f0f0f0;
+    -fx-color-placeholder-bg: #cccccc;
+    
+    /* Spacing */
+    -fx-size-padding-small: 4px;
+    -fx-size-padding-standard: 8px;
+    -fx-size-padding-large: 10px;
+    -fx-size-padding-xlarge: 16px;
+    -fx-size-padding-xxlarge: 24px;
+    -fx-size-gap-small: 10px;
+    -fx-size-gap-standard: 16px;
+    
+    /* Sizing */
+    -fx-size-thumbnail: 200px;
+    -fx-size-thumbnail-border: 4px;
+    -fx-size-grid-gap: 10px;
+}
+
+/* ============================================================================
+   Typography
+   ============================================================================ */
+
+.label-title-main {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.label-title-secondary {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.label-instructions {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.label-instructions-secondary {
+    -fx-font-size: 14px;
+    -fx-text-fill: -fx-color-text-secondary;
+}
+
+.label-body {
+    -fx-font-size: 14px;
+}
+
+.label-centered {
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}
+
+/* ============================================================================
+   Buttons
+   ============================================================================ */
+
+.button-primary {
+    -fx-font-size: 14px;
+    -fx-padding: 8px 20px;
+}
+
+.button-standard {
+    -fx-font-size: 14px;
+}
+
+/* ============================================================================
+   Grid & Layout
+   ============================================================================ */
+
+.grid-pane-phase3 {
+    -fx-border-color: -fx-color-border-light;
+    -fx-border-width: 1;
+    -fx-hgap: -fx-size-grid-gap;
+    -fx-vgap: -fx-size-grid-gap;
+}
+
+.grid-container {
+    -fx-border-color: -fx-color-border-light;
+    -fx-border-width: 1;
+}
+
+/* ============================================================================
+   Thumbnails & Image Components
+   ============================================================================ */
+
+.thumbnail-button {
+    -fx-cursor: hand;
+}
+
+.thumbnail-button-keep {
+    -fx-border-color: -fx-color-keep;
+    -fx-border-width: -fx-size-thumbnail-border;
+    -fx-border-radius: 4;
+}
+
+.thumbnail-button-delete {
+    -fx-border-color: -fx-color-delete;
+    -fx-border-width: -fx-size-thumbnail-border;
+    -fx-border-radius: 4;
+}
+
+.thumbnail-image-placeholder {
+    -fx-fill: -fx-color-placeholder-bg;
+}
+
+/* ============================================================================
+   Progress Indicators
+   ============================================================================ */
+
+.progress-bar-segment {
+    /* Used for SegmentedProgressBar custom rendering */
+    -fx-fill: -fx-color-neutral;
+}
+
+.progress-bar-segment-keep {
+    -fx-fill: -fx-color-keep;
+}
+
+.progress-bar-segment-triage {
+    -fx-fill: -fx-color-triage;
+}
+
+.progress-bar-segment-delete {
+    -fx-fill: -fx-color-delete;
+}
+
+.progress-bar-border {
+    -fx-stroke: -fx-color-border-dark;
+}
+
+/* ============================================================================
+   Dialogs & Alerts
+   ============================================================================ */
+
+.dialog-pref-width {
+    -fx-pref-width: 500px;
+}
+
+/* ============================================================================
+   Specific Component Overrides
+   ============================================================================ */
+
+/* Phase 1 & 2 image container */
+.image-container {
+    -fx-alignment: center;
+}
+
+/* Text areas and read-only content */
+.text-area {
+    -fx-font-family: "Courier New", monospace;
+    -fx-font-size: 11px;
+}
+
+/* Scroll pane adjustments */
+.scroll-pane {
+    -fx-fit-to-width: true;
+    -fx-pannable: true;
+}

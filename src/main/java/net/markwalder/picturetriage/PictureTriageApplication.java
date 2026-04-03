@@ -10,7 +10,14 @@ public class PictureTriageApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        AppCoordinator coordinator = new AppCoordinator(primaryStage);
+        AppCoordinator coordinator = new AppCoordinator(primaryStage, getApplicationStylesheet());
         coordinator.begin();
+    }
+
+    /**
+     * Get the URL of the application stylesheet.
+     */
+    private String getApplicationStylesheet() {
+        return this.getClass().getResource("application.css").toExternalForm();
     }
 }

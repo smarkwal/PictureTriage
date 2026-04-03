@@ -11,11 +11,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.domain.Phase3Decision;
+import net.markwalder.picturetriage.service.ImageCache;
 
-import javax.imageio.ImageIO;
-import javafx.embed.swing.SwingFXUtils;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.function.BiConsumer;
 
 /**
@@ -29,12 +26,15 @@ public class ImageThumbnailButton extends StackPane {
     private static final double BORDER_WIDTH = 4.0;
 
     private final ImageItem imageItem;
+    private final ImageCache imageCache;
     private Phase3Decision currentDecision;
     private final ImageView imageView;
     private BiConsumer<ImageItem, Phase3Decision> onDecisionChanged;
+    private boolean hasFocusIndicator = false;
 
-    public ImageThumbnailButton(ImageItem imageItem, Phase3Decision initialDecision) {
+    public ImageThumbnailButton(ImageItem imageItem, Phase3Decision initialDecision, ImageCache imageCache) {
         this.imageItem = imageItem;
+        this.imageCache = imageCache;
         this.currentDecision = initialDecision;
 
         // Create image view
@@ -50,45 +50,24 @@ public class ImageThumbnailButton extends StackPane {
         setPrefSize(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
         setPadding(new Insets(4));
         getChildren().add(imageView);
+        getStyleClass().add("thumbnail-button");
 
         // Update border based on initial decision
         updateBorder();
 
         // Setup click handler
         setOnMouseClicked(event -> toggleDecision());
-
-        // Make cursor change to hand on hover
-        setStyle("-fx-cursor: hand;");
     }
 
     /**
-     * Load the image from disk into the ImageView.
+     * Load the image from cache into the ImageView.
      * Falls back to a placeholder if image loading fails.
      */
     private void loadImage() {
-        try {
-            String filePath = imageItem.path().toString();
-
-            // Check if WebP format
-            if (filePath.toLowerCase().endsWith(".webp")) {
-                // Use ImageIO with TwelveMonkeys plugin
-                BufferedImage bufferedImage = ImageIO.read(imageItem.path().toFile());
-                if (bufferedImage != null) {
-                    Image fxImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                    imageView.setImage(fxImage);
-                    return;
-                }
-            }
-
-            // For other formats, use JavaFX ImageIO
-            Image image = new Image(imageItem.path().toUri().toString(), true);
-            image.progressProperty().addListener((obs, oldVal, newVal) -> {
-                if (image.isError()) {
-                    setPlaceholder();
-                }
-            });
+        Image image = imageCache.get(imageItem.path());
+        if (image != null && !image.isError()) {
             imageView.setImage(image);
-        } catch (IOException e) {
+        } else {
             setPlaceholder();
         }
     }
@@ -98,13 +77,13 @@ public class ImageThumbnailButton extends StackPane {
      */
     private void setPlaceholder() {
         // Create a simple colored rectangle as placeholder
-        imageView.setStyle("-fx-fill: #cccccc;");
+        imageView.getStyleClass().add("thumbnail-image-placeholder");
     }
 
     /**
      * Toggle the decision for this image and update the display.
      */
-    private void toggleDecision() {
+    public void toggleDecision() {
         Phase3Decision newDecision = currentDecision == Phase3Decision.KEEP
                 ? Phase3Decision.DELETE
                 : Phase3Decision.KEEP;
@@ -119,19 +98,34 @@ public class ImageThumbnailButton extends StackPane {
 
     /**
      * Update the border color based on the current decision.
+     * Also applies a thicker border if the thumbnail has keyboard focus.
      */
     private void updateBorder() {
         Color borderColor = currentDecision == Phase3Decision.KEEP
-                ? Color.web("#00aa00")  // Green
-                : Color.web("#cc0000");  // Red
+                ? Color.web("#2e9f44")  // Green (KEEP)
+                : Color.web("#bf2f2f");  // Red (DELETE)
 
+        // Use thicker border when focused (visual indicator)
+        double borderWidth = hasFocusIndicator ? 6.0 : BORDER_WIDTH;
+        
         BorderStroke stroke = new BorderStroke(
                 borderColor,
                 javafx.scene.layout.BorderStrokeStyle.SOLID,
                 new CornerRadii(4),
-                new BorderWidths(BORDER_WIDTH)
+                new BorderWidths(borderWidth)
         );
         setBorder(new Border(stroke));
+    }
+    
+    /**
+     * Set the keyboard focus indicator (visual highlight).
+     * When true, the border becomes thicker to show this thumbnail is focused.
+     * 
+     * @param focused true to show focus, false to hide
+     */
+    public void setFocusIndicator(boolean focused) {
+        this.hasFocusIndicator = focused;
+        updateBorder();
     }
 
     /**
