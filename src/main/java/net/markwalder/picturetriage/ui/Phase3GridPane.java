@@ -186,37 +186,17 @@ public class Phase3GridPane extends VBox {
     }
     
     /**
-     * Move focus left within the current row, wrapping to the rightmost position.
+     * Move focus to the previous image in the list, wrapping to the last image.
      */
     private void moveLeft() {
-        int column = currentFocusIndex % COLUMNS;
-        int row = currentFocusIndex / COLUMNS;
-        int rowStart = row * COLUMNS;
-        int rowEnd = Math.min(rowStart + COLUMNS, imageOrder.size());
-        
-        if (column > 0) {
-            currentFocusIndex--;
-        } else {
-            // At leftmost, wrap to rightmost of current row
-            currentFocusIndex = rowEnd - 1;
-        }
+        currentFocusIndex = (currentFocusIndex - 1 + imageOrder.size()) % imageOrder.size();
     }
     
     /**
-     * Move focus right within the current row, wrapping to the leftmost position.
+     * Move focus to the next image in the list, wrapping to the first image.
      */
     private void moveRight() {
-        int column = currentFocusIndex % COLUMNS;
-        int row = currentFocusIndex / COLUMNS;
-        int rowStart = row * COLUMNS;
-        int rowEnd = Math.min(rowStart + COLUMNS, imageOrder.size());
-        
-        if (currentFocusIndex + 1 < rowEnd) {
-            currentFocusIndex++;
-        } else {
-            // At rightmost, wrap to leftmost of current row
-            currentFocusIndex = rowStart;
-        }
+        currentFocusIndex = (currentFocusIndex + 1) % imageOrder.size();
     }
     
     /**
