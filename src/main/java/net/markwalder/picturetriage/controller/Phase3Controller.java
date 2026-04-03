@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -89,7 +91,10 @@ public class Phase3Controller {
             updateFinishButtonState(finishButton);
         });
 
-        VBox content = new VBox(10, gridPane, phase3MiniMap);
+        HBox progressBarRow = new HBox(phase3MiniMap);
+        progressBarRow.setAlignment(Pos.CENTER);
+
+        VBox content = new VBox(10, gridPane, progressBarRow);
         VBox.setVgrow(gridPane, Priority.ALWAYS);
 
         PhaseLayoutContainer root = new PhaseLayoutContainer(
@@ -128,6 +133,7 @@ public class Phase3Controller {
         var orderedImages = snapshot.imageDisplayOrder();
         var decisions = snapshot.decisions();
 
+        miniMap.setProgressCounts(phase3Service.getImagesToDelete().size(), phase3Service.getTotalImages());
         miniMap.update(
             blockIndex -> {
                 if (blockIndex < 0 || blockIndex >= orderedImages.size()) {

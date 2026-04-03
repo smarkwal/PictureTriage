@@ -3,8 +3,17 @@ package net.markwalder.picturetriage.ui;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 
 /**
@@ -15,9 +24,10 @@ import javafx.scene.paint.Color;
  * use across different phases and workflows.
  *
  * Blocks are rendered left-to-right and scale to fit the container width with
- * a maximum size of 10 pixels per block.
+ * a maximum size of 10 pixels per block, with a processed/total label shown to
+ * the right.
  */
-public class BlockProgressBar extends Canvas {
+public class BlockProgressBar extends HBox {
     private static final int MAX_BLOCK_SIZE = 10;
     private static final int BLOCK_SPACING = 1;
     private static final int HIGHLIGHT_BORDER_WIDTH = 2;
@@ -28,6 +38,8 @@ public class BlockProgressBar extends Canvas {
     private static final Color HIGHLIGHT_BORDER_COLOR = Color.web("#ffffff");
 
     private final int totalBlocks;
+    private final Canvas canvas;
+    private final Label countLabel;
     private Function<Integer, Color> colorProvider;
     private IntPredicate isHighlighted;
 
@@ -36,10 +48,37 @@ public class BlockProgressBar extends Canvas {
     }
 
     public BlockProgressBar(int totalBlocks, double width, double height) {
-        super(width, height);
         this.totalBlocks = Math.max(1, totalBlocks);
+        this.canvas = new Canvas(getCanvasWidth(width), height);
+        this.countLabel = new Label();
         this.colorProvider = idx -> Color.web("#414760");  // Default gray
         this.isHighlighted = idx -> false;  // Default: no highlights
+
+        setSpacing(20);
+        setAlignment(Pos.CENTER_LEFT);
+        setFillHeight(true);
+        setMaxWidth(Region.USE_PREF_SIZE);
+        setBackground(new Background(new BackgroundFill(BACKGROUND_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
+        setPadding(new Insets(0, MARGIN, 0, 0));
+
+        canvas.widthProperty().addListener((obs, oldValue, newValue) -> redraw());
+        canvas.heightProperty().addListener((obs, oldValue, newValue) -> redraw());
+
+        countLabel.getStyleClass().add("label-body");
+        countLabel.setMinWidth(70);
+        countLabel.setAlignment(Pos.CENTER_LEFT);
+        countLabel.setText("0 / " + this.totalBlocks);
+
+        HBox.setHgrow(canvas, Priority.NEVER);
+        getChildren().addAll(canvas, countLabel);
+        redraw();
+    }
+
+    private double getCanvasWidth(double requestedWidth) {
+        double preferredWidth = 2 * MARGIN
+            + totalBlocks * MAX_BLOCK_SIZE
+            + Math.max(0, totalBlocks - 1) * BLOCK_SPACING;
+        return Math.min(requestedWidth, preferredWidth);
     }
 
     /**
@@ -54,10 +93,16 @@ public class BlockProgressBar extends Canvas {
         redraw();
     }
 
+    public void setProgressCounts(int processed, int total) {
+        int safeTotal = Math.max(0, total);
+        int safeProcessed = Math.max(0, Math.min(processed, safeTotal));
+        countLabel.setText(safeProcessed + " / " + safeTotal);
+    }
+
     private void redraw() {
-        GraphicsContext gc = getGraphicsContext2D();
-        double width = getWidth();
-        double height = getHeight();
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        double width = canvas.getWidth();
+        double height = canvas.getHeight();
 
         // Draw background
         gc.setFill(BACKGROUND_COLOR);
@@ -66,8 +111,7 @@ public class BlockProgressBar extends Canvas {
         // Calculate block size with scaling
         double availableWidth = width - 2 * MARGIN;
         double blockSize = Math.min(MAX_BLOCK_SIZE, availableWidth / totalBlocks);
-        double totalBlocksWidth = blockSize * totalBlocks + BLOCK_SPACING * (totalBlocks - 1);
-        double offsetX = (width - totalBlocksWidth) / 2.0;
+        double offsetX = MARGIN;
 
         // Draw each block
         for (int blockIdx = 0; blockIdx < totalBlocks; blockIdx++) {

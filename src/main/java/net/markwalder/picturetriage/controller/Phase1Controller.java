@@ -148,6 +148,7 @@ public class Phase1Controller {
         Label indexLabel,
         BlockProgressBar blockProgressBar
     ) {
+        blockProgressBar.setProgressCounts(phase1Service.index(), phase1Service.total());
         blockProgressBar.update(
             blockIndex -> {
                 Phase1Decision decision = phase1Service.getDecisionAtIndex(blockIndex);

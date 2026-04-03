@@ -89,6 +89,25 @@ public class QuicksortInteractiveRanker {
         return List.copyOf(items);
     }
 
+    public int getCompletedImageCount() {
+        boolean[] completed = new boolean[items.size()];
+        for (IntRange range : completedRanges) {
+            int start = Math.max(range.lo(), 0);
+            int end = Math.min(range.hi(), items.size() - 1);
+            for (int index = start; index <= end; index++) {
+                completed[index] = true;
+            }
+        }
+
+        int completedCount = 0;
+        for (boolean isCompleted : completed) {
+            if (isCompleted) {
+                completedCount++;
+            }
+        }
+        return completedCount;
+    }
+
     private void advanceToNextPair() {
         while (true) {
             if (partitionActive) {

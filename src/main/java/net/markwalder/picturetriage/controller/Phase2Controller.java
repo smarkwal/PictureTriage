@@ -158,11 +158,14 @@ public class Phase2Controller {
         int keptCount = phase1Result.keptImages().size();
         int triageCount = phase1Result.rankedTriageImages().size();
         int deletedCount = phase1Result.deletedImages().size();
+        int totalImageCount = keptCount + triageCount + deletedCount;
+        int processedImageCount = keptCount + deletedCount + ranker.getCompletedImageCount();
 
         progressPane.updateBlocksDisplay(
             blockIndex -> getPhase2BlockColor(blockIndex, keptCount, triageCount, deletedCount),
             blockIndex -> isPhase2BlockHighlighted(blockIndex, keptCount, triageCount)
         );
+        progressPane.updateProgressCounts(processedImageCount, totalImageCount);
 
         if (ranker.isComplete()) {
             ResultBundle finalResult = new ResultBundle(

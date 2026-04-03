@@ -1,6 +1,8 @@
 package net.markwalder.picturetriage.ui;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class QuicksortProgressPane extends VBox {
@@ -9,9 +11,14 @@ public class QuicksortProgressPane extends VBox {
     public QuicksortProgressPane(int totalImages) {
         setSpacing(6);
         setPadding(new Insets(4, 0, 4, 0));
+        setFillWidth(false);
+        setAlignment(Pos.CENTER);
         this.blockProgressBar = new BlockProgressBar(totalImages, 1000, 24);
         blockProgressBar.setStyle("-fx-padding: 0;");
-        getChildren().add(blockProgressBar);
+
+        HBox progressBarRow = new HBox(blockProgressBar);
+        progressBarRow.setAlignment(Pos.CENTER);
+        getChildren().add(progressBarRow);
     }
 
     /**
@@ -25,6 +32,12 @@ public class QuicksortProgressPane extends VBox {
     ) {
         if (blockProgressBar != null) {
             blockProgressBar.update(colorCallback, highlightCallback);
+        }
+    }
+
+    public void updateProgressCounts(int processed, int total) {
+        if (blockProgressBar != null) {
+            blockProgressBar.setProgressCounts(processed, total);
         }
     }
 }
