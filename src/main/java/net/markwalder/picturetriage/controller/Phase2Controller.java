@@ -1,8 +1,13 @@
 package net.markwalder.picturetriage.controller;
 
+import java.nio.file.Path;
+import java.util.List;
+import java.util.function.Consumer;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -16,11 +21,6 @@ import net.markwalder.picturetriage.service.ImageCache;
 import net.markwalder.picturetriage.service.QuicksortInteractiveRanker;
 import net.markwalder.picturetriage.ui.ImageDisplayPane;
 import net.markwalder.picturetriage.ui.QuicksortProgressPane;
-import javafx.scene.control.Label;
-
-import java.nio.file.Path;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class Phase2Controller {
     private final Stage stage;

@@ -1,5 +1,8 @@
 package net.markwalder.picturetriage.controller;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,9 +22,6 @@ import net.markwalder.picturetriage.service.ImageCache;
 import net.markwalder.picturetriage.service.Phase3WorkflowService;
 import net.markwalder.picturetriage.ui.BlockProgressBar;
 import net.markwalder.picturetriage.ui.Phase3GridPane;
-
-import java.util.List;
-import java.util.function.Consumer;
 
 public class Phase3Controller {
     private final Stage stage;
