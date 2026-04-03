@@ -13,6 +13,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -34,7 +35,7 @@ import net.markwalder.picturetriage.ui.DeleteConfirmationDialog;
 import net.markwalder.picturetriage.ui.ImageDisplayPane;
 import net.markwalder.picturetriage.ui.Phase3GridPane;
 import net.markwalder.picturetriage.ui.QuicksortProgressPane;
-import net.markwalder.picturetriage.ui.SegmentedProgressBar;
+import net.markwalder.picturetriage.ui.BlockProgressBar;
 import net.markwalder.picturetriage.util.StringUtils;
 
 import java.nio.file.Path;
@@ -178,10 +179,10 @@ public class AppCoordinator {
 
         ImageDisplayPane imagePane = new ImageDisplayPane(1000, 620, imageCache, selectedRootFolder);
 
-        SegmentedProgressBar segmentedBar = new SegmentedProgressBar(1000, 24);
+        BlockProgressBar blockProgressBar = new BlockProgressBar(phase1Service.total(), 1000, 24);
         VBox.setVgrow(imagePane, Priority.ALWAYS);
 
-        HBox progressBarRow = new HBox(segmentedBar);
+        HBox progressBarRow = new HBox(blockProgressBar);
         progressBarRow.setAlignment(Pos.CENTER);
 
         VBox root = new VBox(10, instructions, indexLabel, imagePane, progressBarRow, countsLabel);
@@ -201,21 +202,35 @@ public class AppCoordinator {
             } else {
                 return;
             }
-            refreshPhase1View(imagePane, indexLabel, countsLabel, segmentedBar);
+            refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
         });
 
         stage.setScene(scene);
-        refreshPhase1View(imagePane, indexLabel, countsLabel, segmentedBar);
+        refreshPhase1View(imagePane, indexLabel, countsLabel, blockProgressBar);
     }
 
     private void refreshPhase1View(
         ImageDisplayPane imagePane,
         Label indexLabel,
         Label countsLabel,
-        SegmentedProgressBar segmentedBar
+        BlockProgressBar blockProgressBar
     ) {
         var progress = phase1Service.progress();
-        segmentedBar.update(progress.decisionTimeline(), progress.totalImages());
+        // Update block colors and highlights based on phase 1 state
+        blockProgressBar.update(
+            blockIndex -> {
+                Phase1Decision decision = phase1Service.getDecisionAtIndex(blockIndex);
+                if (decision == null) {
+                    return Color.web("#414760");  // Gray for undecided
+                }
+                return switch (decision) {
+                    case KEEP -> Color.web("#2e9f44");    // Green
+                    case TRIAGE -> Color.web("#8a5cff");  // Violet
+                    case DELETE -> Color.web("#bf2f2f");  // Red
+                };
+            },
+            blockIndex -> blockIndex == phase1Service.index()  // Highlight current cursor
+        );
         countsLabel.setText(String.format(
             "Reviewed: %d/%d | Keep: %d | Triage: %d | Delete: %d",
             progress.reviewedCount(),
@@ -254,7 +269,8 @@ public class AppCoordinator {
         ImageDisplayPane rightPane = new ImageDisplayPane(560, 620, imageCache, selectedRootFolder);
         leftPane.setCursor(javafx.scene.Cursor.HAND);
         rightPane.setCursor(javafx.scene.Cursor.HAND);
-        QuicksortProgressPane progressPane = new QuicksortProgressPane();
+        int totalImageCount = phase1Result.keptImages().size() + phase1Result.rankedTriageImages().size() + phase1Result.deletedImages().size();
+        QuicksortProgressPane progressPane = new QuicksortProgressPane(totalImageCount);
 
         HBox compareRow = new HBox(12, leftPane, rightPane);
         compareRow.setAlignment(Pos.CENTER);
@@ -306,6 +322,16 @@ public class AppCoordinator {
         ResultBundle phase1Result
     ) {
         progressPane.update(ranker.progress());
+        
+        // Update block display with phase 2 colors and highlights
+        int keptCount = phase1Result.keptImages().size();
+        int triageCount = phase1Result.rankedTriageImages().size();
+        int deletedCount = phase1Result.deletedImages().size();
+        
+        progressPane.updateBlocksDisplay(
+            blockIndex -> getPhase2BlockColor(blockIndex, keptCount, triageCount, deletedCount),
+            blockIndex -> isPhase2BlockHighlighted(blockIndex, keptCount, triageCount)
+        );
 
         if (ranker.isComplete()) {
             ResultBundle finalResult = new ResultBundle(
@@ -484,6 +510,43 @@ public class AppCoordinator {
         }
 
         return item.path().toString();
+    }
+
+    private Color getPhase2BlockColor(int blockIndex, int keptCount, int triageCount, int deletedCount) {
+        if (blockIndex < keptCount) {
+            return Color.web("#2e9f44");
+        }
+        if (blockIndex < keptCount + triageCount) {
+            int triageIndex = blockIndex - keptCount;
+            return ranker.isImageInFinishedRange(triageIndex)
+                ? Color.web("#8a5cff")
+                : Color.web("#414760");
+        }
+        if (blockIndex < keptCount + triageCount + deletedCount) {
+            return Color.web("#bf2f2f");
+        }
+        return Color.web("#414760");
+    }
+
+    private boolean isPhase2BlockHighlighted(int blockIndex, int keptCount, int triageCount) {
+        if (blockIndex < keptCount || blockIndex >= keptCount + triageCount) {
+            return false;
+        }
+
+        var currentPair = ranker.currentPair();
+        if (currentPair.isEmpty()) {
+            return false;
+        }
+
+        ComparisonPair pair = currentPair.get();
+        int triageIndex = blockIndex - keptCount;
+        List<ImageItem> triageImages = ranker.result();
+        if (triageIndex >= triageImages.size()) {
+            return false;
+        }
+
+        ImageItem blockImage = triageImages.get(triageIndex);
+        return blockImage.equals(pair.left()) || blockImage.equals(pair.right());
     }
 
     private void showInfo(String title, String content) {

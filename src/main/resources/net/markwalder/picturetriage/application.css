@@ -71,22 +71,6 @@
     -fx-background-color: #6791ff;
 }
 
-.text-area {
-    -fx-control-inner-background: -fx-color-bg-surface;
-    -fx-background-color: -fx-color-bg-surface;
-    -fx-text-fill: -fx-color-text-primary;
-    -fx-highlight-fill: -fx-color-triage;
-    -fx-highlight-text-fill: white;
-}
-
-.text-area .content {
-    -fx-background-color: -fx-color-bg-surface;
-}
-
-.text-area .text {
-    -fx-fill: -fx-color-text-primary;
-}
-
 .scroll-pane {
     -fx-fit-to-width: true;
     -fx-pannable: true;
@@ -137,14 +121,6 @@
 
 .progress-indicator {
     -fx-progress-color: -fx-color-triage;
-}
-
-.progress-bar > .track {
-    -fx-background-color: -fx-color-neutral;
-}
-
-.progress-bar > .bar {
-    -fx-background-color: -fx-color-accent-primary;
 }
 
 .tooltip {
@@ -309,8 +285,3 @@
    Specific Component Overrides
    ============================================================================ */
 
-/* Text areas and read-only content */
-.text-area {
-    -fx-font-family: "Courier New", monospace;
-    -fx-font-size: 11px;
-}

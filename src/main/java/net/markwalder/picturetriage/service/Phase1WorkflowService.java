@@ -67,4 +67,17 @@ public class Phase1WorkflowService {
     public ResultBundle partialResult() {
         return new ResultBundle(List.copyOf(kept), List.copyOf(triage), List.copyOf(deleted));
     }
+
+    /**
+     * Returns the decision for the image at the given block index, or null if not yet decided.
+     * @param blockIndex the index in the block timeline (0-based)
+     * @return the Phase1Decision if decided, or null if not yet decided
+     */
+    public Phase1Decision getDecisionAtIndex(int blockIndex) {
+        List<Phase1Decision> timeline = progress.decisionTimeline();
+        if (blockIndex >= 0 && blockIndex < timeline.size()) {
+            return timeline.get(blockIndex);
+        }
+        return null;  // Not yet decided
+    }
 }

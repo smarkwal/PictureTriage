@@ -6,12 +6,15 @@ import net.markwalder.picturetriage.domain.Phase2Progress;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class QuicksortInteractiveRanker {
     private final Deque<IntRange> stack = new ArrayDeque<>();
     private final List<ImageItem> items = new ArrayList<>();
+    private final Set<IntRange> completedRanges = new HashSet<>();
 
     private ComparisonPair currentPair;
     private int comparisonsCompleted;
@@ -28,6 +31,7 @@ public class QuicksortInteractiveRanker {
         items.clear();
         items.addAll(triageItems);
         stack.clear();
+        completedRanges.clear();
         currentPair = null;
         comparisonsCompleted = 0;
         finishedRanges = 0;
@@ -62,6 +66,7 @@ public class QuicksortInteractiveRanker {
             swap(pivotIndex, hi);
             partitionActive = false;
             finishedRanges++;
+            completedRanges.add(new IntRange(pivotIndex, pivotIndex));
 
             int leftLo = lo;
             int leftHi = pivotIndex - 1;
@@ -77,6 +82,16 @@ public class QuicksortInteractiveRanker {
 
     public boolean isComplete() {
         return currentPair == null && stack.isEmpty() && !partitionActive;
+    }
+
+    /**
+     * Returns true if the image at the given index in the triaged list is in a finished range.
+     * @param triageIndex the index of the image in the triaged list (0-based)
+     * @return true if the image's range is complete, false otherwise
+     */
+    public boolean isImageInFinishedRange(int triageIndex) {
+        return completedRanges.stream()
+            .anyMatch(range -> triageIndex >= range.lo() && triageIndex <= range.hi());
     }
 
     public List<ImageItem> result() {
@@ -112,6 +127,8 @@ public class QuicksortInteractiveRanker {
 
             IntRange range = stack.pop();
             if (range.lo() >= range.hi()) {
+                // Range is invalid or single element - mark as complete
+                completedRanges.add(new IntRange(range.lo(), range.lo()));
                 finishedRanges++;
                 continue;
             }
@@ -128,6 +145,9 @@ public class QuicksortInteractiveRanker {
         if (nextLo <= nextHi) {
             stack.push(new IntRange(nextLo, nextHi));
         } else {
+            if (nextLo == nextHi) {
+                completedRanges.add(new IntRange(nextLo, nextHi));
+            }
             finishedRanges++;
         }
     }
