@@ -41,6 +41,20 @@ dependencies {
 }
 
 // ──────────────────────────────────────────────────────────────────────────
+// Dependency locking — pins all transitive dependency versions for
+// reproducible builds and supply-chain attack mitigation.
+// To regenerate after any dependency change:
+//   ./gradlew dependencies --write-locks --no-parallel
+// ──────────────────────────────────────────────────────────────────────────
+
+configurations.configureEach {
+    // Lock all resolvable configurations (skips consumable/declarable ones).
+    if (isCanBeResolved) {
+        resolutionStrategy.activateDependencyLocking()
+    }
+}
+
+// ──────────────────────────────────────────────────────────────────────────
 // Dependency update checks via gradle-versions-plugin
 // Run: ./gradlew dependencyUpdates --no-parallel
 // ──────────────────────────────────────────────────────────────────────────

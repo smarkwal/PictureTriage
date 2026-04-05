@@ -1,0 +1,14 @@
+# This is a Gradle generated file for dependency locking.
+# Manual edits can break the build and are not advised.
+# This file is expected to be part of source control.
+com.twelvemonkeys.common:common-image:3.13.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.twelvemonkeys.common:common-io:3.13.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.twelvemonkeys.common:common-lang:3.13.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.twelvemonkeys.imageio:imageio-core:3.13.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.twelvemonkeys.imageio:imageio-metadata:3.13.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.twelvemonkeys.imageio:imageio-webp:3.13.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.openjfx:javafx-base:25.0.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.openjfx:javafx-controls:25.0.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.openjfx:javafx-graphics:25.0.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.openjfx:javafx-swing:25.0.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+empty=annotationProcessor,testAnnotationProcessor

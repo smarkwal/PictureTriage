@@ -58,7 +58,7 @@ See [java.instructions.md](instructions/java.instructions.md) — automatically 
 
 ## Common Development Tasks
 
-- **Checking for dependency updates**: Run `./gradlew dependencyUpdates --no-parallel`; the report is printed to the console and saved to `build/dependencyUpdates/report.txt`. Only stable-version upgrades are shown (pre-releases and release candidates are filtered out). Update version numbers directly in `build.gradle.kts`, then run `./gradlew build` to verify.
+- **Checking for dependency updates**: Run `./gradlew dependencyUpdates --no-parallel`; the report is printed to the console and saved to `build/dependencyUpdates/report.txt`. Only stable-version upgrades are shown (pre-releases and release candidates are filtered out). Update version numbers directly in `build.gradle.kts`, then run `./gradlew dependencies --write-locks --no-parallel` to regenerate the lockfile, and `./gradlew build` to verify.
 - **Adding a new image format**: Update the image scanner to recognize the extension; add a dependency if the format requires one
 - **Modifying workflow logic**: Update the relevant workflow service; update the corresponding phase controller
 - **Modifying UI**: Update the relevant UI component or controller; check `application.css` for unused CSS classes
