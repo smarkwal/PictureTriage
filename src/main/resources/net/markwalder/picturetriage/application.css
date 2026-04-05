@@ -1,5 +1,9 @@
 /* ============================================================================
    Picture Triage Application Stylesheet
+   ----------------------------------------------------------------------------
+   NOTE: This is a JavaFX CSS stylesheet, not browser CSS. The -fx-* properties
+   are part of the JavaFX CSS dialect and are intentional. Tools or linters that
+   treat them as vendor-prefixed browser properties will produce false positives.
    ============================================================================ */
 
 /* ============================================================================
