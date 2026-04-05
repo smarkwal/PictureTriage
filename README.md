@@ -1,6 +1,6 @@
-# PictureTriage
+# Picture Triage
 
-A desktop application for organizing and ranking pictures through an interactive multi-phase workflow. PictureTriage helps you efficiently process large photo directories by categorizing images and ranking those requiring further review.
+A desktop application for organizing and ranking pictures through an interactive multi-phase workflow. Picture Triage helps you efficiently process large photo directories by categorizing images and ranking those requiring further review.
 
 ## Features
 
@@ -29,13 +29,26 @@ A desktop application for organizing and ranking pictures through an interactive
 ./gradlew run
 ```
 
-Alternatively, after building, run the generated distribution script:
+Alternatively, install the distribution locally and use the generated launch script:
 
 ```bash
-./build/scripts/PictureTriage
+./gradlew installDist
+./build/install/PictureTriage/bin/PictureTriage
 ```
 
-On Windows, use `./build/scripts/PictureTriage.bat`.
+On Windows, use `./build/install/PictureTriage/bin/PictureTriage.bat`.
+
+## Native App Bundle (macOS)
+
+A self-contained macOS `.dmg` installer can be built with:
+
+```bash
+./gradlew jpackage
+```
+
+The installer is written to `build/jpackage/Picture Triage-<version>.dmg`. It bundles the application JARs together with a minimal JRE — no separate Java installation is required on the target machine.
+
+To produce a plain `.app` bundle instead of a DMG wrapper, change `--type dmg` to `--type app-image` in `build.gradle.kts`.
 
 ## Dependencies
 

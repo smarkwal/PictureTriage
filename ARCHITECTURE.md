@@ -1,8 +1,8 @@
-# PictureTriage: Architecture
+# Picture Triage: Architecture
 
 ## Overview
 
-PictureTriage is organized into a layered architecture with strict separation of concerns. Each layer has a single responsibility and depends only on layers below it.
+Picture Triage is organized into a layered architecture with strict separation of concerns. Each layer has a single responsibility and depends only on layers below it.
 
 ```
 Bootstrap → Coordinator → Controllers → Services → Domain
