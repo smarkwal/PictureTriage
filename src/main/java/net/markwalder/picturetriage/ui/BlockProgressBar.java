@@ -44,10 +44,6 @@ public class BlockProgressBar extends HBox {
     private Function<Integer, Color> colorProvider;
     private IntPredicate isHighlighted;
 
-    public BlockProgressBar(int totalBlocks) {
-        this(totalBlocks, 1000, 32);
-    }
-
     public BlockProgressBar(int totalBlocks, double width, double height) {
         this.totalBlocks = Math.max(1, totalBlocks);
         this.canvas = new Canvas(getCanvasWidth(width), height);
