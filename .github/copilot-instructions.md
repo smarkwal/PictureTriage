@@ -68,6 +68,10 @@ If the Context7 MCP tools are available, use these IDs with the `mcp_context7_qu
 
 See [java.instructions.md](instructions/java.instructions.md) — automatically applied when editing Java files.
 
+## Agent Guardrails
+
+See [agent-guardrails.instructions.md](instructions/agent-guardrails.instructions.md) — always applied.
+
 ## Common Development Tasks
 
 - **Keeping docs in sync**: After adding a class, renaming a type, changing workflow phases, or updating dependencies, run the `doc-sync` skill to review and update `README.md`, `ARCHITECTURE.md`, `copilot-instructions.md`, and the `SKILL.md` files for accuracy.
