@@ -42,3 +42,8 @@ applyTo: "**/*.java"
 
 - UI components (`ui/` package) must not contain business logic or workflow state
 - Components accept data via constructor or setters and expose callbacks or properties
+
+## Java Language Version
+
+- Never use Java preview features — only use features that are fully released and stable
+- Avoid using deprecated Java or JavaFX APIs; prefer their documented replacements
