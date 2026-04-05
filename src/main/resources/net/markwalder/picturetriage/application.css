@@ -124,15 +124,32 @@
 }
 
 .phase3-scroll-pane .scroll-bar:vertical {
-    -fx-pref-width: 16px;
+    -fx-pref-width: 20px;
 }
 
 .phase3-scroll-pane .scroll-bar .thumb {
-    -fx-background-color: -fx-color-accent-primary;
+    -fx-background-color: white;
 }
 
 .phase3-scroll-pane .scroll-bar .thumb:hover {
-    -fx-background-color: #6791ff;
+    -fx-background-color: #cccccc;
+}
+
+.phase3-scroll-pane .scroll-bar:vertical .increment-button,
+.phase3-scroll-pane .scroll-bar:vertical .decrement-button {
+    -fx-background-color: #171a28;
+    -fx-padding: 5px 0;
+}
+
+.phase3-scroll-pane .scroll-bar:vertical .increment-button:hover,
+.phase3-scroll-pane .scroll-bar:vertical .decrement-button:hover {
+    -fx-background-color: #20253a;
+}
+
+.phase3-scroll-pane .scroll-bar:vertical .increment-arrow,
+.phase3-scroll-pane .scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: white;
+    -fx-padding: 5px 6px;
 }
 
 .progress-indicator {
@@ -276,8 +293,8 @@
     -fx-pref-height: 56px;
     -fx-max-height: 56px;
     -fx-padding: 0 12px;
-    -fx-background-color: -fx-color-bg-surface;
-    -fx-border-color: -fx-color-border-light;
+    -fx-background-color: -fx-color-bg-surface-2;
+    -fx-border-color: -fx-color-border-dark;
     -fx-border-width: 0 0 1 0;
 }
 
@@ -287,8 +304,8 @@
 }
 
 .phase-layout-footer {
-    -fx-background-color: -fx-color-bg-surface;
-    -fx-border-color: -fx-color-border-light;
+    -fx-background-color: -fx-color-bg-surface-2;
+    -fx-border-color: -fx-color-border-dark;
     -fx-border-width: 1 0 0 0;
 }
 
