@@ -1,0 +1,20 @@
+# Auto-detect text files and normalize line endings to LF on check-in.
+* text=auto eol=lf
+
+# Windows batch scripts must use CRLF line endings.
+*.bat text eol=crlf
+
+# Binary files — never modify line endings.
+*.jar binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.bmp binary
+*.tiff binary
+*.tif binary
+*.webp binary
+*.ico binary
+*.icns binary
+*.dmg binary
+*.class binary
