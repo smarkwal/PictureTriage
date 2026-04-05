@@ -20,12 +20,12 @@ import net.markwalder.picturetriage.service.ImageCache;
 
 /**
  * Grid layout pane for Phase 3 displaying all images.
- * 
- * Manages a 4-column grid of ImageThumbnailButton components.
- * Provides methods to populate the grid and update individual thumbnail states.
+ *
+ * Displays images in a responsive grid whose column count is computed from the
+ * available viewport width at layout time. Keyboard navigation adapts automatically.
  */
 public class Phase3GridPane extends VBox {
-    private static final int COLUMNS = 4;
+    private static final double THUMBNAIL_SIZE = 200.0;
     private static final double GAP = 10.0;
 
     private final GridPane gridPane;
@@ -38,6 +38,7 @@ public class Phase3GridPane extends VBox {
     private List<ImageItem> imageOrder = new ArrayList<>();
     private Map<ImageItem, Integer> imageIndexMap = new HashMap<>();
     private int currentFocusIndex = 0;
+    private int currentColumns = 1;
 
     public Phase3GridPane(ImageCache imageCache) {
         this.imageCache = imageCache;
@@ -59,7 +60,16 @@ public class Phase3GridPane extends VBox {
         scrollPane.setPannable(false);  // Disable panning so arrow keys work for navigation
         getChildren().add(scrollPane);
         setVgrow(scrollPane, javafx.scene.layout.Priority.ALWAYS);
-        
+
+        // Recompute columns whenever the viewport width changes
+        scrollPane.viewportBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
+            int newColumns = computeColumns(newBounds.getWidth());
+            if (newColumns != currentColumns) {
+                currentColumns = newColumns;
+                relayout();
+            }
+        });
+
         // Request focus on the grid pane itself so keyboard events are captured
         setFocusTraversable(true);
     }
@@ -76,16 +86,20 @@ public class Phase3GridPane extends VBox {
         imageIndexMap.clear();
         currentFocusIndex = 0;
 
+        // Use current viewport width to determine initial column count if available
+        double vpWidth = scrollPane.getViewportBounds().getWidth();
+        if (vpWidth > 0) {
+            currentColumns = computeColumns(vpWidth);
+        }
+
         List<ImageItem> images = state.imageDisplayOrder();
         imageOrder.addAll(images);
         for (int i = 0; i < images.size(); i++) {
             imageIndexMap.put(images.get(i), i);
         }
-        
-        int row = 0;
-        int col = 0;
 
-        for (ImageItem image : images) {
+        for (int i = 0; i < images.size(); i++) {
+            ImageItem image = images.get(i);
             Phase3Decision decision = state.getDecision(image);
             ImageThumbnailButton thumbnail = new ImageThumbnailButton(image, decision, imageCache);
 
@@ -101,18 +115,9 @@ public class Phase3GridPane extends VBox {
                 }
             });
 
-            // Add thumbnail to map for later updates
+            // Add thumbnail to map and grid
             thumbnailMap.put(image, thumbnail);
-
-            // Add to grid
-            gridPane.add(thumbnail, col, row);
-
-            // Move to next position
-            col++;
-            if (col >= COLUMNS) {
-                col = 0;
-                row++;
-            }
+            gridPane.add(thumbnail, i % currentColumns, i / currentColumns);
         }
         
         // Request focus on the first thumbnail for keyboard navigation
@@ -200,30 +205,57 @@ public class Phase3GridPane extends VBox {
      * Move focus up one row (same column position), wrapping to the bottom row.
      */
     private void moveUp() {
-        int column = currentFocusIndex % COLUMNS;
-        int newIndex = currentFocusIndex - COLUMNS;
-        
+        int column = currentFocusIndex % currentColumns;
+        int newIndex = currentFocusIndex - currentColumns;
+
         if (newIndex >= 0) {
             currentFocusIndex = newIndex;
         } else {
             // Wrap to same column in the last row
-            int lastRowStart = (imageOrder.size() - 1) / COLUMNS * COLUMNS;
+            int lastRowStart = (imageOrder.size() - 1) / currentColumns * currentColumns;
             currentFocusIndex = Math.min(lastRowStart + column, imageOrder.size() - 1);
         }
     }
-    
+
     /**
      * Move focus down one row (same column position), wrapping to the top row.
      */
     private void moveDown() {
-        int column = currentFocusIndex % COLUMNS;
-        int newIndex = currentFocusIndex + COLUMNS;
-        
+        int column = currentFocusIndex % currentColumns;
+        int newIndex = currentFocusIndex + currentColumns;
+
         if (newIndex < imageOrder.size()) {
             currentFocusIndex = newIndex;
         } else {
             // Wrap to same column in the first row
             currentFocusIndex = column;
+        }
+    }
+
+    /**
+     * Compute the number of columns that fit in the given viewport width.
+     */
+    private int computeColumns(double viewportWidth) {
+        // Return 1 column minimum when width is not yet known
+        if (viewportWidth <= 0) {
+            return 1;
+        }
+        // Account for grid padding on both sides
+        double usable = viewportWidth - 2 * GAP;
+        int cols = (int) Math.max(1, (usable + GAP) / (THUMBNAIL_SIZE + GAP));
+        return cols;
+    }
+
+    /**
+     * Re-assign each thumbnail to the correct grid cell after a column-count change.
+     */
+    private void relayout() {
+        for (int i = 0; i < imageOrder.size(); i++) {
+            ImageThumbnailButton btn = thumbnailMap.get(imageOrder.get(i));
+            if (btn != null) {
+                GridPane.setColumnIndex(btn, i % currentColumns);
+                GridPane.setRowIndex(btn, i / currentColumns);
+            }
         }
     }
     
