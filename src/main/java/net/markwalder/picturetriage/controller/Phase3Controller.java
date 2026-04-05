@@ -124,7 +124,7 @@ public class Phase3Controller {
         var orderedImages = snapshot.imageDisplayOrder();
         var decisions = snapshot.decisions();
 
-        miniMap.setProgressCounts(phase3Service.getImagesToDelete().size(), phase3Service.getTotalImages());
+        miniMap.setProgressCounts(phase3Service.getImagesToKeepCount(), phase3Service.getTotalImages());
         miniMap.update(
             blockIndex -> {
                 if (blockIndex < 0 || blockIndex >= orderedImages.size()) {

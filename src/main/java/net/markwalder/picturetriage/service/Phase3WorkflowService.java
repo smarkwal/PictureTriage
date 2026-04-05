@@ -100,6 +100,17 @@ public class Phase3WorkflowService {
                 .toList();
     }
 
+    /**
+     * Get the count of images marked to keep.
+     * 
+     * @return number of images with KEEP decision
+     */
+    public int getImagesToKeepCount() {
+        return (int) decisions.values().stream()
+                .filter(decision -> decision == Phase3Decision.KEEP)
+                .count();
+    }
+
     public boolean hasImagesToDelete() {
         return decisions.values().stream().anyMatch(decision -> decision == Phase3Decision.DELETE);
     }
