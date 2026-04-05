@@ -33,6 +33,9 @@ public class Phase3GridPane extends VBox {
     private final ImageCache imageCache;
     private BiConsumer<ImageItem, Phase3Decision> onImageDecisionChanged;
     
+    // Shared preview popup — one instance displays full-size images on hover across all thumbnails
+    private final ImagePreviewPopup previewPopup = new ImagePreviewPopup();
+
     // Keyboard navigation state
     private final List<ImageItem> imageOrder = new ArrayList<>();
     private final Map<ImageItem, Integer> imageIndexMap = new HashMap<>();
@@ -103,6 +106,9 @@ public class Phase3GridPane extends VBox {
             ImageThumbnailButton thumbnail = new ImageThumbnailButton(image, decision, imageCache);
 
             // Register the callback for when this thumbnail is clicked
+            // Attach the shared preview popup so the thumbnail can show it on hover
+            thumbnail.setPreviewPopup(previewPopup);
+
             thumbnail.setOnDecisionChanged((img, newDecision) -> {
                 Integer clickedIndex = imageIndexMap.get(img);
                 if (clickedIndex != null) {

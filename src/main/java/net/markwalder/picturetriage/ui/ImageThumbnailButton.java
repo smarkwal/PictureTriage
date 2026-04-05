@@ -5,21 +5,23 @@ import java.util.function.BiConsumer;
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Window;
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.domain.Phase3Decision;
 import net.markwalder.picturetriage.service.ImageCache;
 
 /**
  * A clickable thumbnail button for Phase 3 grid display.
- * 
- * Displays a 200x200px image with a colored border indicating the current decision
- * (green for KEEP, red for DELETE). Clicking toggles the decision and updates the border.
+ *
+ * Left click toggles the keep/delete decision and updates the border.
+ * Right click toggles the full-image preview popup open/closed.
  */
 public class ImageThumbnailButton extends StackPane {
     private static final double THUMBNAIL_SIZE = 200.0;
@@ -34,6 +36,7 @@ public class ImageThumbnailButton extends StackPane {
     private final ImageView imageView;
     private BiConsumer<ImageItem, Phase3Decision> onDecisionChanged;
     private boolean hasFocusIndicator = false;
+    private ImagePreviewPopup previewPopup;
 
     public ImageThumbnailButton(ImageItem imageItem, Phase3Decision initialDecision, ImageCache imageCache) {
         this.imageItem = imageItem;
@@ -42,12 +45,9 @@ public class ImageThumbnailButton extends StackPane {
 
         // Create image view
         this.imageView = new ImageView();
-        double imageSize = THUMBNAIL_SIZE - (2 * TOTAL_INSET);
-        imageView.setFitWidth(imageSize);
-        imageView.setFitHeight(imageSize);
         imageView.setPreserveRatio(true);
 
-        // Load image
+        // Load image (also sets fit dimensions to prevent upscaling)
         loadImage();
 
         // Setup layout
@@ -61,20 +61,53 @@ public class ImageThumbnailButton extends StackPane {
         // Update border based on initial decision
         updateBorder();
 
-        // Setup click handler
-        setOnMouseClicked(event -> toggleDecision());
+        // Left click: toggle the keep/delete decision
+        // Right click: toggle the preview popup open/closed
+        setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                toggleDecision();
+            } else if (event.getButton() == MouseButton.SECONDARY) {
+                togglePreview();
+            }
+        });
     }
 
     /**
      * Load the image from cache into the ImageView.
+     * Caps fit dimensions to the image's natural size to prevent upscaling.
      * Falls back to a placeholder if image loading fails.
      */
     private void loadImage() {
         Image image = imageCache.get(imageItem.path());
         if (image != null && !image.isError()) {
             imageView.setImage(image);
+            applyFitSize(image);
         } else {
             setPlaceholder();
+        }
+    }
+
+    /**
+     * Set the fit dimensions to the minimum of the cell size and the image's natural size,
+     * ensuring the image is never upscaled. For background-loaded images the dimensions are
+     * not yet known; a one-shot listener updates the fit once they become available.
+     */
+    private void applyFitSize(Image image) {
+        double cap = THUMBNAIL_SIZE - (2 * TOTAL_INSET);
+        if (image.getWidth() > 0) {
+            // Dimensions already known (synchronously loaded image)
+            imageView.setFitWidth(Math.min(cap, image.getWidth()));
+            imageView.setFitHeight(Math.min(cap, image.getHeight()));
+        } else {
+            // Background-loading image: apply max constraint now and tighten once dimensions arrive
+            imageView.setFitWidth(cap);
+            imageView.setFitHeight(cap);
+            image.widthProperty().addListener((obs, oldW, newW) -> {
+                if (newW.doubleValue() > 0) {
+                    imageView.setFitWidth(Math.min(cap, newW.doubleValue()));
+                    imageView.setFitHeight(Math.min(cap, image.getHeight()));
+                }
+            });
         }
     }
 
@@ -141,6 +174,34 @@ public class ImageThumbnailButton extends StackPane {
      */
     public void setOnDecisionChanged(BiConsumer<ImageItem, Phase3Decision> callback) {
         this.onDecisionChanged = callback;
+    }
+
+    /**
+     * Set the preview popup used to show the full image on left click.
+     * The popup is shared across all thumbnails in the grid.
+     */
+    public void setPreviewPopup(ImagePreviewPopup previewPopup) {
+        this.previewPopup = previewPopup;
+    }
+
+    /**
+     * Toggle the preview popup: show it if hidden, hide it if already showing.
+     * Does nothing if no preview popup is configured or the image cannot be loaded.
+     */
+    private void togglePreview() {
+        if (previewPopup == null || getScene() == null) {
+            return;
+        }
+        if (previewPopup.isShowing()) {
+            previewPopup.hide();
+            return;
+        }
+        Image image = imageCache.get(imageItem.path());
+        if (image != null && !image.isError()) {
+            // Obtain the owner window from the current scene at the moment the timer fires
+            Window owner = getScene().getWindow();
+            previewPopup.show(image, owner);
+        }
     }
 }
 

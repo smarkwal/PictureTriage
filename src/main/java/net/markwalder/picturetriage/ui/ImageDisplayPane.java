@@ -122,10 +122,13 @@ public class ImageDisplayPane extends Region {
         // Footer sits directly below the image area
         footer.resizeRelocate(x, side, side, footerH);
 
-        // ImageView fit size stays square, centered within the image area padding
+        // ImageView fit size is bounded by the available area; never upscale smaller images
         double fitSize = Math.max(0, side - (IMAGE_AREA_PADDING * 2) - (BORDER_WIDTH * 2));
-        imageView.setFitWidth(fitSize);
-        imageView.setFitHeight(fitSize);
+        Image currentImage = imageView.getImage();
+        double natW = (currentImage != null) ? currentImage.getWidth() : 0;
+        double natH = (currentImage != null) ? currentImage.getHeight() : 0;
+        imageView.setFitWidth((natW > 0) ? Math.min(fitSize, natW) : fitSize);
+        imageView.setFitHeight((natH > 0) ? Math.min(fitSize, natH) : fitSize);
     }
 
     @Override
@@ -175,6 +178,16 @@ public class ImageDisplayPane extends Region {
         imageView.setImage(hasImage ? image : null);
         placeholderLabel.setVisible(!hasImage);
         placeholderLabel.setManaged(!hasImage);
+
+        // For background-loaded images, trigger a re-layout once dimensions become available
+        // so that layoutChildren() can apply the correct no-upscale fit size.
+        if (hasImage && image.getWidth() == 0) {
+            image.widthProperty().addListener((obs, oldW, newW) -> {
+                if (newW.doubleValue() > 0) {
+                    requestLayout();
+                }
+            });
+        }
     }
 
     private void refreshMetadata() {
