@@ -72,6 +72,12 @@ A successful build confirms the new version resolves, compiles, and passes all t
 
 ---
 
+## Context7 Library IDs
+
+After updating a dependency version, check whether the Context7 Library ID table in `.github/copilot-instructions.md` needs to be updated. Use `mcp_context7_resolve-library-id` to search for the updated library and verify the ID is still correct and points to the right version. Update the table if needed.
+
+---
+
 ## Commit
 
 Include both changed files in the commit:

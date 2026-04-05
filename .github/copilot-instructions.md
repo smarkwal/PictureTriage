@@ -52,6 +52,18 @@ The application follows a sequential, one-directional phase flow:
 
 JPG, JPEG, PNG, WEBP (extension check is case-insensitive)
 
+## Context7 Library IDs
+
+If the Context7 MCP tools are available, use these IDs with the `mcp_context7_query-docs` tool to fetch up-to-date documentation:
+
+| Library | Context7 ID |
+| --- | --- |
+| Java SE & JDK 25 | `/websites/oracle_en_java_javase_25` |
+| JavaFX 25 | `/websites/openjfx_io_javadoc_25` |
+| Gradle User Manual | `/websites/gradle` |
+| TwelveMonkeys ImageIO | `/haraldk/twelvemonkeys` |
+| JUnit 5 | `/websites/junit_current` |
+
 ## Code Style & Conventions
 
 See [java.instructions.md](instructions/java.instructions.md) — automatically applied when editing Java files.
