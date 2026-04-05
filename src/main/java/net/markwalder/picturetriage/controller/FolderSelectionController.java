@@ -8,6 +8,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -37,6 +39,14 @@ public class FolderSelectionController {
     public void showFolderSelection(Consumer<FolderScanResult> onScanCompleted) {
         this.onScanCompleted = onScanCompleted;
 
+        // Load the app icon at highest available resolution for crisp display on HiDPI screens
+        Image icon = new Image(getClass().getResourceAsStream("/icon_512.png"));
+        ImageView iconView = new ImageView(icon);
+        iconView.setFitWidth(128);
+        iconView.setFitHeight(128);
+        iconView.setPreserveRatio(true);
+        iconView.setSmooth(true);
+
         Label title = new Label("Picture Triage");
         title.getStyleClass().add("label-title-main");
 
@@ -45,7 +55,7 @@ public class FolderSelectionController {
         selectButton.getStyleClass().add("button-primary");
         selectButton.setOnAction(e -> selectFolder());
 
-        VBox root = new VBox(16, title, details, selectButton);
+        VBox root = new VBox(16, iconView, title, details, selectButton);
         root.setPadding(new Insets(24));
         root.setAlignment(Pos.CENTER);
 
