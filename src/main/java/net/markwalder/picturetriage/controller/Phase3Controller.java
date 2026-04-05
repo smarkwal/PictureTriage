@@ -6,8 +6,6 @@ import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import net.markwalder.picturetriage.domain.ImageItem;
@@ -83,12 +81,9 @@ public class Phase3Controller {
             updateFinishButtonState(finishButton);
         });
 
-        VBox content = new VBox(gridPane);
-        VBox.setVgrow(gridPane, Priority.ALWAYS);
-
         PhaseLayoutContainer root = new PhaseLayoutContainer(
             "Phase 3: Final Review",
-            content,
+            gridPane,
             restartButton,
             List.of(finishButton),
             null,

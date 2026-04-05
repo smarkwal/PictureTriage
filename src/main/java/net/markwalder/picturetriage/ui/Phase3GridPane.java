@@ -42,9 +42,6 @@ public class Phase3GridPane extends VBox {
     public Phase3GridPane(ImageCache imageCache) {
         this.imageCache = imageCache;
         // Setup layout
-        setPadding(new Insets(10));
-        setSpacing(10);
-        getStyleClass().add("grid-container");
 
         // Create grid pane
         this.gridPane = new GridPane();

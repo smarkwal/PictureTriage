@@ -111,6 +111,10 @@
     -fx-background-color: -fx-color-text-secondary;
 }
 
+.phase3-scroll-pane .scroll-bar:vertical {
+    -fx-pref-width: 16px;
+}
+
 .phase3-scroll-pane .scroll-bar .thumb {
     -fx-background-color: -fx-color-accent-primary;
 }
@@ -245,17 +249,9 @@
    ============================================================================ */
 
 .grid-pane-phase3 {
-    -fx-border-color: -fx-color-border-light;
-    -fx-border-width: 1;
     -fx-hgap: -fx-size-grid-gap;
     -fx-vgap: -fx-size-grid-gap;
     -fx-background-color: rgba(20, 23, 35, 0.7);
-}
-
-.grid-container {
-    -fx-border-color: -fx-color-border-light;
-    -fx-border-width: 1;
-    -fx-background-color: rgba(13, 15, 24, 0.85);
 }
 
 .phase-layout-container {
@@ -275,7 +271,7 @@
 
 .phase-layout-content {
     -fx-spacing: -fx-size-gap-small;
-    -fx-padding: 16px;
+    -fx-padding: 0;
 }
 
 .phase-layout-footer {

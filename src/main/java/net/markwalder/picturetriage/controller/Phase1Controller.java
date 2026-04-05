@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
@@ -60,6 +61,7 @@ public class Phase1Controller {
         BlockProgressBar blockProgressBar = new BlockProgressBar(phase1Service.total(), 1000, 24);
 
         VBox content = new VBox(imagePane);
+        content.setPadding(new Insets(16));
 
         Button restartButton = new Button("Restart");
         restartButton.getStyleClass().add("button-primary");

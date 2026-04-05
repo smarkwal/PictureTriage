@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -78,6 +79,7 @@ public class Phase2Controller {
         HBox.setHgrow(rightPane, Priority.ALWAYS);
 
         VBox content = new VBox(compareRow);
+        content.setPadding(new Insets(16));
         VBox.setVgrow(compareRow, Priority.ALWAYS);
 
         Button restartButton = new Button("Restart");
