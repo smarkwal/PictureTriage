@@ -77,6 +77,7 @@ See [java.instructions.md](instructions/java.instructions.md) — automatically 
 - **Modifying UI**: Update the relevant UI component or controller; check `application.css` for unused CSS classes
 - **Adding a new phase**: Add a domain record for progress tracking, a workflow service, a controller, and wire the transition in the coordinator
 - **Formatting and imports**: Format Java code and optimize imports when editing any file
+- **Renaming, moving, or deleting files**: After any file is renamed, moved, or deleted, search **all** files in the repository for references to the old filename or path — including Java source files, `build.gradle.kts`, Markdown documentation, `.github/copilot-instructions.md`, instruction files (`.github/instructions/`), skill files (`.github/skills/`), GitHub Actions workflows, and CSS files — and update or remove any stale references before finishing the task.
 
 ## Commit Message Guidelines
 - Follow the pattern `<type>: <area>: <message>` where:
