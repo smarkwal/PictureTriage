@@ -1,6 +1,9 @@
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+
 plugins {
     id("application")
     id("org.openjfx.javafxplugin") version "0.1.0"
+    id("com.github.ben-manes.versions") version "0.53.0"
 }
 
 java {
@@ -35,6 +38,24 @@ javafx {
 dependencies {
     // TwelveMonkeys ImageIO WebP plugin: Pure Java implementation for reading WebP images.
     implementation("com.twelvemonkeys.imageio:imageio-webp:3.13.1")
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Dependency update checks via gradle-versions-plugin
+// Run: ./gradlew dependencyUpdates --no-parallel
+// ──────────────────────────────────────────────────────────────────────────
+
+fun isNonStable(version: String): Boolean {
+    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
+    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+    return !(stableKeyword || regex.matches(version))
+}
+
+tasks.withType<DependencyUpdatesTask> {
+    // Reject non-stable candidate versions when the current version is stable
+    rejectVersionIf {
+        isNonStable(candidate.version) && !isNonStable(currentVersion)
+    }
 }
 
 application {
