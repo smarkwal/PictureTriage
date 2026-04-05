@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import javafx.application.Platform;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -85,17 +83,16 @@ public class Phase3Controller {
             updateFinishButtonState(finishButton);
         });
 
-        HBox progressBarRow = new HBox(phase3MiniMap);
-        progressBarRow.setAlignment(Pos.CENTER);
-
-        VBox content = new VBox(10, gridPane, progressBarRow);
+        VBox content = new VBox(gridPane);
         VBox.setVgrow(gridPane, Priority.ALWAYS);
 
         PhaseLayoutContainer root = new PhaseLayoutContainer(
             "Phase 3: Final Review",
             content,
             restartButton,
-            List.of(finishButton)
+            List.of(finishButton),
+            null,
+            phase3MiniMap
         );
 
         Scene scene = new Scene(root);

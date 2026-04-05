@@ -59,8 +59,8 @@ public class Phase2Controller {
     }
 
     private void showPhase2() {
-        ImageDisplayPane leftPane = new ImageDisplayPane(560, 560, imageCache, selectedRootFolder);
-        ImageDisplayPane rightPane = new ImageDisplayPane(560, 560, imageCache, selectedRootFolder);
+        ImageDisplayPane leftPane = new ImageDisplayPane(imageCache, selectedRootFolder);
+        ImageDisplayPane rightPane = new ImageDisplayPane(imageCache, selectedRootFolder);
         leftPane.setCursor(javafx.scene.Cursor.HAND);
         rightPane.setCursor(javafx.scene.Cursor.HAND);
         int totalImageCount = phase1Result.keptImages().size()
@@ -73,7 +73,8 @@ public class Phase2Controller {
         HBox.setHgrow(leftPane, Priority.ALWAYS);
         HBox.setHgrow(rightPane, Priority.ALWAYS);
 
-        VBox content = new VBox(10, compareRow, progressPane);
+        VBox content = new VBox(compareRow);
+        VBox.setVgrow(compareRow, Priority.ALWAYS);
 
         Button restartButton = new Button("Restart");
         restartButton.getStyleClass().add("button-primary");
@@ -105,7 +106,9 @@ public class Phase2Controller {
             "Phase 2: Rank Triaged Images",
             content,
             restartButton,
-            List.of(leftButton, rightButton)
+            List.of(leftButton, rightButton),
+            null,
+            progressPane
         );
 
         Scene scene = new Scene(root);

@@ -14,11 +14,11 @@ import javafx.scene.layout.VBox;
 
 public class PhaseLayoutContainer extends VBox {
     public PhaseLayoutContainer(String titleText, Node content, List<Button> actionButtons) {
-        this(titleText, content, null, actionButtons, null);
+        this(titleText, content, null, actionButtons, null, null);
     }
 
     public PhaseLayoutContainer(String titleText, Node content, Button leftButton, List<Button> actionButtons) {
-        this(titleText, content, leftButton, actionButtons, null);
+        this(titleText, content, leftButton, actionButtons, null, null);
     }
 
     public PhaseLayoutContainer(
@@ -27,6 +27,17 @@ public class PhaseLayoutContainer extends VBox {
         Button leftButton,
         List<Button> actionButtons,
         Button rightButton
+    ) {
+        this(titleText, content, leftButton, actionButtons, rightButton, null);
+    }
+
+    public PhaseLayoutContainer(
+        String titleText,
+        Node content,
+        Button leftButton,
+        List<Button> actionButtons,
+        Button rightButton,
+        Node progressBar
     ) {
         getStyleClass().add("phase-layout-container");
         setFillWidth(true);
@@ -41,6 +52,8 @@ public class PhaseLayoutContainer extends VBox {
         VBox contentContainer = new VBox(content);
         contentContainer.getStyleClass().add("phase-layout-content");
         VBox.setVgrow(contentContainer, Priority.ALWAYS);
+        // Make the content node fill the container vertically
+        VBox.setVgrow(content, Priority.ALWAYS);
 
         BorderPane actionBar = new BorderPane();
         actionBar.getStyleClass().add("phase-layout-action-bar");
@@ -68,7 +81,21 @@ public class PhaseLayoutContainer extends VBox {
             actionBar.setRight(rightBox);
         }
 
-        getChildren().addAll(titleBar, contentContainer, actionBar);
+        // The footer wraps the optional progress bar row above the action buttons
+        VBox footer = new VBox();
+        footer.getStyleClass().add("phase-layout-footer");
+
+        if (progressBar != null) {
+            // Progress bar row sits above the buttons inside the footer
+            HBox progressBarRow = new HBox(progressBar);
+            progressBarRow.getStyleClass().add("phase-layout-progress-bar-row");
+            progressBarRow.setAlignment(Pos.CENTER);
+            footer.getChildren().add(progressBarRow);
+        }
+
+        footer.getChildren().add(actionBar);
+
+        getChildren().addAll(titleBar, contentContainer, footer);
         VBox.setVgrow(contentContainer, Priority.ALWAYS);
     }
 }

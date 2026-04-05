@@ -4,12 +4,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -57,21 +54,12 @@ public class Phase1Controller {
     }
 
     private void showPhase1() {
-        Label indexLabel = new Label();
-        indexLabel.setMaxWidth(Double.MAX_VALUE);
-        indexLabel.setAlignment(Pos.CENTER);
-        indexLabel.getStyleClass().add("label-body");
-
-        ImageDisplayPane imagePane = new ImageDisplayPane(1000, 560, imageCache, selectedRootFolder);
-
-        BlockProgressBar blockProgressBar = new BlockProgressBar(phase1Service.total(), 1000, 24);
+        ImageDisplayPane imagePane = new ImageDisplayPane(imageCache, selectedRootFolder);
         VBox.setVgrow(imagePane, Priority.ALWAYS);
 
-        HBox progressBarRow = new HBox(blockProgressBar);
-        progressBarRow.setAlignment(Pos.CENTER);
+        BlockProgressBar blockProgressBar = new BlockProgressBar(phase1Service.total(), 1000, 24);
 
-        VBox content = new VBox(10, indexLabel, imagePane, progressBarRow);
-        content.setAlignment(Pos.TOP_CENTER);
+        VBox content = new VBox(imagePane);
 
         Button restartButton = new Button("Restart");
         restartButton.getStyleClass().add("button-primary");
@@ -85,28 +73,28 @@ public class Phase1Controller {
         keepButton.getStyleClass().add("button-keep");
         keepButton.setOnAction(e -> {
             phase1Service.applyDecision(Phase1Decision.KEEP);
-            refreshPhase1View(imagePane, indexLabel, blockProgressBar);
+            refreshPhase1View(imagePane, blockProgressBar);
         });
 
         Button triageButton = new Button("Triage");
         triageButton.getStyleClass().add("button-triage");
         triageButton.setOnAction(e -> {
             phase1Service.applyDecision(Phase1Decision.TRIAGE);
-            refreshPhase1View(imagePane, indexLabel, blockProgressBar);
+            refreshPhase1View(imagePane, blockProgressBar);
         });
 
         Button deleteButton = new Button("Delete");
         deleteButton.getStyleClass().add("button-delete");
         deleteButton.setOnAction(e -> {
             phase1Service.applyDecision(Phase1Decision.DELETE);
-            refreshPhase1View(imagePane, indexLabel, blockProgressBar);
+            refreshPhase1View(imagePane, blockProgressBar);
         });
 
         Button nextButton = new Button("Next");
         nextButton.getStyleClass().add("button-primary");
         nextButton.setOnAction(e -> {
             phase1Service.triageRemaining();
-            refreshPhase1View(imagePane, indexLabel, blockProgressBar);
+            refreshPhase1View(imagePane, blockProgressBar);
         });
 
         PhaseLayoutContainer root = new PhaseLayoutContainer(
@@ -114,7 +102,8 @@ public class Phase1Controller {
             content,
             restartButton,
             List.of(keepButton, triageButton, deleteButton),
-            nextButton
+            nextButton,
+            blockProgressBar
         );
 
         Scene scene = new Scene(root);
@@ -129,17 +118,16 @@ public class Phase1Controller {
                     return;
                 }
             }
-            refreshPhase1View(imagePane, indexLabel, blockProgressBar);
+            refreshPhase1View(imagePane, blockProgressBar);
             event.consume();
         });
 
         stage.setScene(scene);
-        refreshPhase1View(imagePane, indexLabel, blockProgressBar);
+        refreshPhase1View(imagePane, blockProgressBar);
     }
 
     private void refreshPhase1View(
         ImageDisplayPane imagePane,
-        Label indexLabel,
         BlockProgressBar blockProgressBar
     ) {
         blockProgressBar.setProgressCounts(phase1Service.index(), phase1Service.total());
@@ -167,6 +155,5 @@ public class Phase1Controller {
 
         ImageItem current = phase1Service.currentImage();
         imagePane.setImageItem(current);
-        indexLabel.setText("Image " + (phase1Service.index() + 1) + " of " + phase1Service.total());
     }
 }

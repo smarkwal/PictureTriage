@@ -26,7 +26,7 @@ import javafx.scene.layout.VBox;
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.service.ImageCache;
 
-public class ImageDisplayPane extends VBox {
+public class ImageDisplayPane extends Region {
     private static final double IMAGE_AREA_PADDING = 20.0;
     private static final double FOOTER_HEIGHT = 74.0;
     private static final double BORDER_WIDTH = 2.0;
@@ -39,33 +39,29 @@ public class ImageDisplayPane extends VBox {
     private final Label dimensionsLabel = new Label();
     private final Label fileSizeLabel = new Label();
 
+    // Fields so layoutChildren() can position them directly
+    private final StackPane imageArea;
+    private final VBox footer;
+
     private final Path displayRoot;
     private ImageItem imageItem;
 
-    public ImageDisplayPane(double cardWidth, double cardHeight, ImageCache imageCache, Path displayRoot) {
+    public ImageDisplayPane(ImageCache imageCache, Path displayRoot) {
         this.imageCache = imageCache;
         this.displayRoot = displayRoot;
 
-        double imageAreaHeight = Math.max(0, cardHeight - FOOTER_HEIGHT);
-        double imageFitWidth = Math.max(0, cardWidth - (IMAGE_AREA_PADDING * 2) - (BORDER_WIDTH * 2));
-        double imageFitHeight = Math.max(0, imageAreaHeight - (IMAGE_AREA_PADDING * 2) - (BORDER_WIDTH * 2));
-
         imageView.setPreserveRatio(true);
-        imageView.setFitWidth(imageFitWidth);
-        imageView.setFitHeight(imageFitHeight);
         imageView.setSmooth(true);
 
         placeholderLabel.getStyleClass().addAll("label-body", "image-display-placeholder");
         placeholderLabel.setVisible(false);
         placeholderLabel.setManaged(false);
 
-        StackPane imageArea = new StackPane(imageView, placeholderLabel);
+        // The image area size is computed in layoutChildren() to always be square
+        imageArea = new StackPane(imageView, placeholderLabel);
         imageArea.getStyleClass().add("image-display-image-area");
         imageArea.setPadding(new Insets(IMAGE_AREA_PADDING));
         imageArea.setAlignment(Pos.CENTER);
-        imageArea.setPrefHeight(imageAreaHeight);
-        imageArea.setMinHeight(Region.USE_PREF_SIZE);
-        imageArea.setMaxHeight(Region.USE_PREF_SIZE);
 
         configureLabel(pathLabel, "image-display-path");
         configureLabel(dimensionsLabel, "image-display-meta");
@@ -82,22 +78,44 @@ public class ImageDisplayPane extends VBox {
         HBox secondRow = new HBox(fileSizeLabel);
         secondRow.setAlignment(Pos.CENTER_RIGHT);
 
-        VBox footer = new VBox(4, firstRow, secondRow);
+        footer = new VBox(4, firstRow, secondRow);
         footer.getStyleClass().add("image-display-footer");
-        footer.setPrefHeight(FOOTER_HEIGHT);
-        footer.setMinHeight(FOOTER_HEIGHT);
-        footer.setMaxHeight(FOOTER_HEIGHT);
 
         getChildren().addAll(imageArea, footer);
         getStyleClass().add("image-display-pane");
-        setFillWidth(true);
-        setAlignment(Pos.TOP_CENTER);
-        setPrefWidth(cardWidth);
-        setMinWidth(Region.USE_PREF_SIZE);
-        setMaxWidth(Region.USE_PREF_SIZE);
-        setPrefHeight(cardHeight);
-        setMinHeight(Region.USE_PREF_SIZE);
-        setMaxHeight(Region.USE_PREF_SIZE);
+
+        // Allow this pane to grow to fill the space allocated by its parent
+        setMaxWidth(Double.MAX_VALUE);
+        setMaxHeight(Double.MAX_VALUE);
+    }
+
+    @Override
+    protected void layoutChildren() {
+        double w = snapSizeX(getWidth());
+        double h = snapSizeY(getHeight());
+        double footerH = snapSizeY(FOOTER_HEIGHT);
+
+        // Image area fills the full width; its height is capped to maintain a 1:1 image square inside
+        double side = snapSizeY(Math.max(0, Math.min(w, h - footerH)));
+
+        // The image area spans full width but only as tall as the square side
+        imageArea.resizeRelocate(0, 0, w, side);
+        footer.resizeRelocate(0, side, w, footerH);
+
+        // The ImageView fit size stays square, centered within the full-width image area
+        double fitSize = Math.max(0, side - (IMAGE_AREA_PADDING * 2) - (BORDER_WIDTH * 2));
+        imageView.setFitWidth(fitSize);
+        imageView.setFitHeight(fitSize);
+    }
+
+    @Override
+    protected double computeMinWidth(double height) {
+        return 100;
+    }
+
+    @Override
+    protected double computeMinHeight(double width) {
+        return FOOTER_HEIGHT + 50;
     }
 
     public void setImageItem(ImageItem imageItem) {
