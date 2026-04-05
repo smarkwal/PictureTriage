@@ -143,11 +143,12 @@ val buildIcns by tasks.registering(Exec::class) {
     description = "Converts source PNG icons into a macOS .icns file"
     val iconsetDir = layout.buildDirectory.dir("icons/PictureTriage.iconset")
     val icnsFile = layout.buildDirectory.file("icons/PictureTriage.icns")
+    inputs.dir("src/main/resources/icons")
     outputs.file(icnsFile)
     doFirst {
         // Populate the .iconset directory with the required filenames.
         // Each logical size needs a 1x file and a @2x (retina) file at 2x resolution.
-        val src = file("src/main/resources")
+        val src = file("src/main/resources/icons")
         val dst = iconsetDir.get().asFile
         dst.deleteRecursively()
         dst.mkdirs()
