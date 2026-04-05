@@ -10,13 +10,13 @@ import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.domain.Phase1Decision;
 import net.markwalder.picturetriage.domain.ResultBundle;
 import net.markwalder.picturetriage.service.ImageCache;
 import net.markwalder.picturetriage.service.Phase1WorkflowService;
+import net.markwalder.picturetriage.ui.AppColors;
 import net.markwalder.picturetriage.ui.BlockProgressBar;
 import net.markwalder.picturetriage.ui.ImageDisplayPane;
 import net.markwalder.picturetriage.ui.PhaseLayoutContainer;
@@ -138,12 +138,12 @@ public class Phase1Controller {
             blockIndex -> {
                 Phase1Decision decision = phase1Service.getDecisionAtIndex(blockIndex);
                 if (decision == null) {
-                    return Color.web("#414760");
+                    return AppColors.BORDER_DARK;
                 }
                 return switch (decision) {
-                    case KEEP -> Color.web("#2e9f44");
-                    case TRIAGE -> Color.web("#8a5cff");
-                    case DELETE -> Color.web("#bf2f2f");
+                    case KEEP -> AppColors.KEEP;
+                    case TRIAGE -> AppColors.TRIAGE;
+                    case DELETE -> AppColors.DELETE;
                 };
             },
             blockIndex -> blockIndex == phase1Service.index()

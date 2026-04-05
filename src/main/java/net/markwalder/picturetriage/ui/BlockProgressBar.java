@@ -8,9 +8,6 @@ import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -34,10 +31,6 @@ public class BlockProgressBar extends HBox {
     private static final int HIGHLIGHT_BORDER_WIDTH = 2;
     private static final int MARGIN = 10;
 
-    private static final Color BACKGROUND_COLOR = Color.web("#232638");
-    private static final Color BLOCK_BORDER_COLOR = Color.web("#414760");
-    private static final Color HIGHLIGHT_BORDER_COLOR = Color.web("#ffffff");
-
     private final int totalBlocks;
     private final Canvas canvas;
     private final Label countLabel;
@@ -48,14 +41,14 @@ public class BlockProgressBar extends HBox {
         this.totalBlocks = Math.max(1, totalBlocks);
         this.canvas = new Canvas(getCanvasWidth(width), height);
         this.countLabel = new Label();
-        this.colorProvider = idx -> Color.web("#414760");  // Default gray
+        this.colorProvider = idx -> AppColors.BORDER_DARK;  // Default gray
         this.isHighlighted = idx -> false;  // Default: no highlights
 
         setSpacing(20);
         setAlignment(Pos.CENTER_LEFT);
         setFillHeight(true);
         setMaxWidth(Region.USE_PREF_SIZE);
-        setBackground(new Background(new BackgroundFill(BACKGROUND_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
+        getStyleClass().add("block-progress-bar");
         setPadding(new Insets(0, MARGIN, 0, 0));
 
         canvas.widthProperty().addListener((obs, oldValue, newValue) -> redraw());
@@ -85,7 +78,7 @@ public class BlockProgressBar extends HBox {
      * @param isHighlighted Predicate that returns true if block should be highlighted
      */
     public void update(Function<Integer, Color> colorProvider, IntPredicate isHighlighted) {
-        this.colorProvider = colorProvider != null ? colorProvider : idx -> Color.web("#414760");
+        this.colorProvider = colorProvider != null ? colorProvider : idx -> AppColors.BORDER_DARK;
         this.isHighlighted = isHighlighted != null ? isHighlighted : idx -> false;
         redraw();
     }
@@ -102,7 +95,7 @@ public class BlockProgressBar extends HBox {
         double height = canvas.getHeight();
 
         // Draw background
-        gc.setFill(BACKGROUND_COLOR);
+        gc.setFill(AppColors.NEUTRAL);
         gc.fillRect(0, 0, width, height);
 
         double availableWidth = width - 2 * MARGIN;
@@ -141,13 +134,13 @@ public class BlockProgressBar extends HBox {
 
             // Only draw borders for blocks larger than 2px to keep them visible
             if (blockSize > 2.0) {
-                gc.setStroke(BLOCK_BORDER_COLOR);
+                gc.setStroke(AppColors.BORDER_DARK);
                 gc.setLineWidth(1);
                 gc.strokeRect(x, blockY, blockSize, BLOCK_HEIGHT);
 
                 // Draw highlight border if needed
                 if (isHighlighted.test(blockIdx)) {
-                    gc.setStroke(HIGHLIGHT_BORDER_COLOR);
+                    gc.setStroke(AppColors.HIGHLIGHT);
                     gc.setLineWidth(HIGHLIGHT_BORDER_WIDTH);
                     double inset = HIGHLIGHT_BORDER_WIDTH / 2.0;
                     gc.strokeRect(x + inset, blockY + inset, blockSize - HIGHLIGHT_BORDER_WIDTH, BLOCK_HEIGHT - HIGHLIGHT_BORDER_WIDTH);

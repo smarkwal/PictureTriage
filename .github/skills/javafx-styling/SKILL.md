@@ -18,41 +18,8 @@ Design tokens (colors, sizes, spacing) are defined as **CSS custom properties** 
 
 ### Available Tokens
 
-**Colors:**
-| Token | Value | Purpose |
-|---|---|---|
-| `-fx-color-bg-primary` | `#050507` | Main window background |
-| `-fx-color-bg-surface` | `#0f111a` | Card/panel background |
-| `-fx-color-bg-surface-2` | `#171a28` | Secondary surface (buttons) |
-| `-fx-color-keep` | `#2e9f44` | Keep action green |
-| `-fx-color-triage` | `#8a5cff` | Triage action purple |
-| `-fx-color-delete` | `#bf2f2f` | Delete action red |
-| `-fx-color-accent-primary` | `#4f7cff` | Primary accent blue |
-| `-fx-color-accent-secondary` | `#8a5cff` | Secondary accent purple |
-| `-fx-color-neutral` | `#232638` | Neutral surface |
-| `-fx-color-border-dark` | `#414760` | Dark border |
-| `-fx-color-border-light` | `#2f3448` | Light border |
-| `-fx-color-text-primary` | `#f4f6ff` | Main text |
-| `-fx-color-text-secondary` | `#bcc3dd` | Secondary/muted text |
-| `-fx-color-placeholder-bg` | `#262b40` | Placeholder fill |
-
-**Spacing:**
-| Token | Value |
-|---|---|
-| `-fx-size-padding-small` | `4px` |
-| `-fx-size-padding-standard` | `8px` |
-| `-fx-size-padding-large` | `10px` |
-| `-fx-size-padding-xlarge` | `16px` |
-| `-fx-size-padding-xxlarge` | `24px` |
-| `-fx-size-gap-small` | `10px` |
-| `-fx-size-gap-standard` | `16px` |
-
-**Sizing:**
-| Token | Value |
-|---|---|
-| `-fx-size-thumbnail` | `200px` |
-| `-fx-size-thumbnail-border` | `4px` |
-| `-fx-size-grid-gap` | `10px` |
+Read the `.root` block in `application.css` for the full list — each CSS custom property
+has an inline comment explaining its purpose.
 
 ---
 
@@ -105,59 +72,15 @@ node.getStyleClass().remove("button-keep");
 node.getStyleClass().add("button-delete");
 ```
 
-Never hard-code inline styles via `node.setStyle(...)` outside of dynamic runtime values — put the style in the CSS file.
+Never hard-code inline styles via `node.setStyle(...)` — put the style in `application.css` and apply it with `getStyleClass().add(...)`. The only accepted exception is a truly dynamic, per-instance value that cannot be represented as a CSS class (e.g., a width calculated at runtime from data).
 
 ---
 
-## Existing CSS Class Reference
+## Existing CSS Classes
 
-### Typography
-| Class | Use |
-|---|---|
-| `.label-title-main` | 28px bold — page titles |
-| `.label-title-secondary` | 24px bold — phase titles |
-| `.label-body` | 14px — body text, metadata |
-
-### Buttons
-| Class | Use |
-|---|---|
-| `.button-primary` | Blue CTA buttons |
-| `.button-keep` | Green Keep button |
-| `.button-triage` | Purple Triage button |
-| `.button-delete` | Red Delete button |
-
-### Phase Layout Structure
-| Class | Applied to |
-|---|---|
-| `.phase-layout-container` | Root `VBox` of a phase |
-| `.phase-layout-title-bar` | Top bar with phase title |
-| `.phase-layout-content` | Middle content area |
-| `.phase-layout-footer` | Bottom footer area |
-| `.phase-layout-action-bar` | Button row inside footer |
-| `.phase-layout-progress-bar-row` | Progress indicator row inside footer |
-
-### Image Components
-| Class | Applied to |
-|---|---|
-| `.image-display-pane` | Outer card container |
-| `.image-display-image-area` | Image area of the card |
-| `.image-display-footer` | Footer area of the card |
-| `.image-display-path` | Path label (leading ellipsis) |
-| `.image-display-meta` | Metadata label (right-aligned) |
-| `.image-display-placeholder` | "No image" placeholder label |
-| `.thumbnail-button` | Clickable thumbnail in Phase 3 grid |
-| `.thumbnail-image-placeholder` | Placeholder fill for thumbnails |
-
-### Phase 3-Specific
-| Class | Applied to |
-|---|---|
-| `.grid-pane-phase3` | The `GridPane` holding thumbnails |
-| `.phase3-scroll-pane` | The `ScrollPane` wrapping the grid |
-
-### Dialogs
-| Class | Applied to |
-|---|---|
-| `.app-dialog` | Custom-themed `Alert` dialog panes |
+`application.css` is the authoritative reference — classes are organized into sections with
+inline comments describing what each is applied to. Read it before adding a new class to
+check whether a suitable one already exists.
 
 ---
 
@@ -168,6 +91,24 @@ Never hard-code inline styles via `node.setStyle(...)` outside of dynamic runtim
 3. If the new style is a variation of an existing one (e.g., a new button color), follow the same pattern as the nearest similar class (`.button-keep`, `.button-delete`, etc.)
 4. Apply the class in the Java constructor of the relevant component via `getStyleClass().add(...)`
 5. After the change, run `./gradlew run` and visually verify the style
+
+---
+
+## Java Color Constants — AppColors
+
+Whenever a `javafx.scene.paint.Color` object is required in Java code (e.g. for
+`Canvas` drawing in `BlockProgressBar`), use the constants in
+`net.markwalder.picturetriage.ui.AppColors` instead of calling `Color.web("#...")` inline.
+
+Read `AppColors.java` for the current list — each constant has a Javadoc comment explaining
+its purpose and the corresponding CSS token.
+
+Rules:
+- **Never write `Color.web("#...")`** outside of `AppColors.java` itself.
+- When adding a new color that also has a CSS usage, add it to both `AppColors.java`
+  **and** as a token in `.root` in `application.css`, keeping the values in sync.
+- If a color is only ever used in CSS, define it only as a token — no need for an
+  `AppColors` constant.
 
 ---
 

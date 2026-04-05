@@ -20,6 +20,7 @@ import net.markwalder.picturetriage.service.ComparisonChoice;
 import net.markwalder.picturetriage.service.ComparisonPair;
 import net.markwalder.picturetriage.service.ImageCache;
 import net.markwalder.picturetriage.service.QuicksortInteractiveRanker;
+import net.markwalder.picturetriage.ui.AppColors;
 import net.markwalder.picturetriage.ui.ImageDisplayPane;
 import net.markwalder.picturetriage.ui.PhaseLayoutContainer;
 import net.markwalder.picturetriage.ui.QuicksortProgressPane;
@@ -189,18 +190,18 @@ public class Phase2Controller {
 
     private Color getPhase2BlockColor(int blockIndex, int keptCount, int triageCount, int deletedCount) {
         if (blockIndex < keptCount) {
-            return Color.web("#2e9f44");
+            return AppColors.KEEP;
         }
         if (blockIndex < keptCount + triageCount) {
             int triageIndex = blockIndex - keptCount;
             return ranker.isImageInFinishedRange(triageIndex)
-                ? Color.web("#8a5cff")
-                : Color.web("#414760");
+                ? AppColors.TRIAGE
+                : AppColors.BORDER_DARK;
         }
         if (blockIndex < keptCount + triageCount + deletedCount) {
-            return Color.web("#bf2f2f");
+            return AppColors.DELETE;
         }
-        return Color.web("#414760");
+        return AppColors.BORDER_DARK;
     }
 
     private boolean isPhase2BlockHighlighted(int blockIndex, int keptCount, int triageCount) {

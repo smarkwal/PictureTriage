@@ -42,6 +42,9 @@ applyTo: "**/*.java"
 
 - UI components (`ui/` package) must not contain business logic or workflow state
 - Components accept data via constructor or setters and expose callbacks or properties
+- Never call `node.setStyle("...")` — define a CSS class in `application.css` and apply it with `getStyleClass().add(...)`
+- Never write `Color.web("#...")` outside of `AppColors.java` — use the named constants from `net.markwalder.picturetriage.ui.AppColors`
+- Never call `node.setBackground(...)` or `node.setBorder(...)` with hard-coded colors — use CSS classes instead
 
 ## Java Language Version
 

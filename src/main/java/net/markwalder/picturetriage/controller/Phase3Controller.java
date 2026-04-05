@@ -6,13 +6,13 @@ import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.domain.Phase3Decision;
 import net.markwalder.picturetriage.domain.ResultBundle;
 import net.markwalder.picturetriage.service.ImageCache;
 import net.markwalder.picturetriage.service.Phase3WorkflowService;
+import net.markwalder.picturetriage.ui.AppColors;
 import net.markwalder.picturetriage.ui.BlockProgressBar;
 import net.markwalder.picturetriage.ui.Phase3GridPane;
 import net.markwalder.picturetriage.ui.PhaseLayoutContainer;
@@ -123,13 +123,13 @@ public class Phase3Controller {
         miniMap.update(
             blockIndex -> {
                 if (blockIndex < 0 || blockIndex >= orderedImages.size()) {
-                    return Color.web("#414760");
+                    return AppColors.BORDER_DARK;
                 }
                 ImageItem image = orderedImages.get(blockIndex);
                 Phase3Decision decision = decisions.get(image);
                 return decision == Phase3Decision.KEEP
-                    ? Color.web("#2e9f44")
-                    : Color.web("#bf2f2f");
+                    ? AppColors.KEEP
+                    : AppColors.DELETE;
             },
             blockIndex -> blockIndex == selectedIndex
         );

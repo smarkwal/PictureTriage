@@ -14,7 +14,7 @@ public class QuicksortProgressPane extends VBox {
         setFillWidth(false);
         setAlignment(Pos.CENTER);
         this.blockProgressBar = new BlockProgressBar(totalImages, 1000, 24);
-        blockProgressBar.setStyle("-fx-padding: 0;");
+        blockProgressBar.setPadding(Insets.EMPTY);
 
         HBox progressBarRow = new HBox(blockProgressBar);
         progressBarRow.setAlignment(Pos.CENTER);

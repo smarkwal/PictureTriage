@@ -2,16 +2,10 @@ package net.markwalder.picturetriage.ui;
 
 import java.util.function.BiConsumer;
 
-import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import net.markwalder.picturetriage.domain.ImageItem;
 import net.markwalder.picturetriage.domain.Phase3Decision;
@@ -25,9 +19,7 @@ import net.markwalder.picturetriage.service.ImageCache;
  */
 public class ImageThumbnailButton extends StackPane {
     private static final double THUMBNAIL_SIZE = 200.0;
-    private static final double BASE_BORDER_WIDTH = 4.0;
-    private static final double FOCUSED_BORDER_WIDTH = 6.0;
-    // Keep total inset constant to avoid layout jitter when focus changes.
+    // Total inset (border + padding) on each side, kept constant to avoid layout jitter.
     private static final double TOTAL_INSET = 8.0;
 
     private final ImageItem imageItem;
@@ -138,23 +130,18 @@ public class ImageThumbnailButton extends StackPane {
     /**
      * Update the border color based on the current decision.
      * Also applies a thicker border if the thumbnail has keyboard focus.
+     * Border styling is handled entirely via CSS classes (thumbnail-keep,
+     * thumbnail-delete, thumbnail-focused) defined in application.css.
      */
     private void updateBorder() {
-        Color borderColor = currentDecision == Phase3Decision.KEEP
-                ? Color.web("#2e9f44")  // Green (KEEP)
-                : Color.web("#bf2f2f");  // Red (DELETE)
+        // Swap keep/delete class to change the border color
+        getStyleClass().removeAll("thumbnail-keep", "thumbnail-delete", "thumbnail-focused");
+        getStyleClass().add(currentDecision == Phase3Decision.KEEP ? "thumbnail-keep" : "thumbnail-delete");
 
-        double borderWidth = hasFocusIndicator ? FOCUSED_BORDER_WIDTH : BASE_BORDER_WIDTH;
-        double padding = TOTAL_INSET - borderWidth;
-
-        BorderStroke stroke = new BorderStroke(
-                borderColor,
-                javafx.scene.layout.BorderStrokeStyle.SOLID,
-                new CornerRadii(4),
-                new BorderWidths(borderWidth)
-        );
-        setBorder(new Border(stroke));
-        setPadding(new Insets(padding));
+        // Toggle focus class — CSS applies thicker border and compensating padding
+        if (hasFocusIndicator) {
+            getStyleClass().add("thumbnail-focused");
+        }
     }
     
     /**

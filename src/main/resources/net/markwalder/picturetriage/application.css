@@ -12,34 +12,34 @@
 
 .root {
     /* Primary Colors */
-    -fx-color-bg-primary: #050507;
-    -fx-color-bg-surface: #0f111a;
-    -fx-color-bg-surface-2: #171a28;
-    -fx-color-keep: #2e9f44;
-    -fx-color-triage: #8a5cff;
-    -fx-color-delete: #bf2f2f;
-    -fx-color-accent-primary: #4f7cff;
-    -fx-color-accent-secondary: #8a5cff;
-    -fx-color-neutral: #232638;
-    -fx-color-border-dark: #414760;
-    -fx-color-text-primary: #f4f6ff;
-    -fx-color-text-secondary: #bcc3dd;
-    -fx-color-border-light: #2f3448;
-    -fx-color-placeholder-bg: #262b40;
+    -fx-color-bg-primary: #050507;      /* main window background */
+    -fx-color-bg-surface: #0f111a;      /* card/panel background */
+    -fx-color-bg-surface-2: #171a28;    /* secondary surface (buttons, footer) */
+    -fx-color-keep: #2e9f44;            /* "keep" action — green */
+    -fx-color-triage: #8a5cff;          /* "triage" action — purple */
+    -fx-color-delete: #bf2f2f;          /* "delete" action — red */
+    -fx-color-accent-primary: #4f7cff;  /* primary accent — blue */
+    -fx-color-accent-secondary: #8a5cff; /* secondary accent — purple */
+    -fx-color-neutral: #232638;         /* neutral surface */
+    -fx-color-border-dark: #414760;     /* dark border */
+    -fx-color-text-primary: #f4f6ff;    /* main text */
+    -fx-color-text-secondary: #bcc3dd;  /* secondary/muted text */
+    -fx-color-border-light: #2f3448;    /* light border */
+    -fx-color-placeholder-bg: #262b40;  /* image placeholder fill */
     
     /* Spacing */
-    -fx-size-padding-small: 4px;
-    -fx-size-padding-standard: 8px;
-    -fx-size-padding-large: 10px;
-    -fx-size-padding-xlarge: 16px;
-    -fx-size-padding-xxlarge: 24px;
-    -fx-size-gap-small: 10px;
-    -fx-size-gap-standard: 16px;
-    
+    -fx-size-padding-small: 4px;        /* 4px — tight padding */
+    -fx-size-padding-standard: 8px;     /* 8px — standard padding */
+    -fx-size-padding-large: 10px;       /* 10px — large padding */
+    -fx-size-padding-xlarge: 16px;      /* 16px — extra-large padding */
+    -fx-size-padding-xxlarge: 24px;     /* 24px — double-extra-large padding */
+    -fx-size-gap-small: 10px;           /* 10px — small gap between items */
+    -fx-size-gap-standard: 16px;        /* 16px — standard gap between items */
+
     /* Sizing */
-    -fx-size-thumbnail: 200px;
-    -fx-size-thumbnail-border: 4px;
-    -fx-size-grid-gap: 10px;
+    -fx-size-thumbnail: 200px;          /* thumbnail button size (width and height) */
+    -fx-size-thumbnail-border: 4px;     /* default thumbnail border width */
+    -fx-size-grid-gap: 10px;            /* gap between cells in the Phase 3 grid */
 
     -fx-background-color: -fx-color-bg-primary;
     -fx-text-fill: -fx-color-text-primary;
@@ -115,6 +115,7 @@
     -fx-background-color: -fx-color-text-secondary;
 }
 
+/* ScrollPane wrapping the Phase 3 thumbnail grid — black background with custom scrollbar */
 .phase3-scroll-pane {
     -fx-background-color: black;
 }
@@ -162,6 +163,7 @@
     -fx-border-color: -fx-color-border-light;
 }
 
+/* Custom-themed dialogs; apply .app-dialog to an Alert's dialogPane for the dark theme */
 .dialog-pane,
 .app-dialog {
     -fx-background-color: -fx-color-bg-surface;
@@ -208,16 +210,19 @@
    Typography
    ============================================================================ */
 
+/* 28px bold — applied to main page and phase headings */
 .label-title-main {
     -fx-font-size: 28px;
     -fx-font-weight: bold;
 }
 
+/* 24px bold — applied to secondary section titles */
 .label-title-secondary {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
 }
 
+/* 14px regular — applied to body text and metadata labels */
 .label-body {
     -fx-font-size: 14px;
 }
@@ -226,11 +231,13 @@
    Buttons
    ============================================================================ */
 
+/* Primary CTA button — blue (accent-primary) */
 .button-primary {
     -fx-font-size: 14px;
     -fx-padding: 8px 20px;
 }
 
+/* Keep action button — green (color-keep) */
 .button-keep {
     -fx-font-size: 14px;
     -fx-padding: 8px 20px;
@@ -245,6 +252,7 @@
     -fx-background-color: #39b450;
 }
 
+/* Triage action button — purple (color-triage) */
 .button-triage {
     -fx-font-size: 14px;
     -fx-padding: 8px 20px;
@@ -259,6 +267,7 @@
     -fx-background-color: #9a6cff;
 }
 
+/* Delete action button — red (color-delete) */
 .button-delete {
     -fx-font-size: 14px;
     -fx-padding: 8px 20px;
@@ -277,17 +286,20 @@
    Grid & Layout
    ============================================================================ */
 
+/* GridPane holding Phase 3 thumbnail buttons */
 .grid-pane-phase3 {
     -fx-hgap: -fx-size-grid-gap;
     -fx-vgap: -fx-size-grid-gap;
     -fx-background-color: black;
 }
 
+/* Root VBox of a phase layout (PhaseLayoutContainer) */
 .phase-layout-container {
     -fx-spacing: 0;
     -fx-padding: 0;
 }
 
+/* Top bar showing the phase title, with a bottom border */
 .phase-layout-title-bar {
     -fx-min-height: 56px;
     -fx-pref-height: 56px;
@@ -298,22 +310,26 @@
     -fx-border-width: 0 0 1 0;
 }
 
+/* Middle content area of a phase layout */
 .phase-layout-content {
     -fx-spacing: -fx-size-gap-small;
     -fx-padding: 0;
 }
 
+/* Bottom footer containing the progress bar row and action button row */
 .phase-layout-footer {
     -fx-background-color: -fx-color-bg-surface-2;
     -fx-border-color: -fx-color-border-dark;
     -fx-border-width: 1 0 0 0;
 }
 
+/* Progress indicator row inside the footer */
 .phase-layout-progress-bar-row {
     -fx-padding: 10px 12px 0 12px;
     -fx-alignment: center;
 }
 
+/* Action button row inside the footer */
 .phase-layout-action-bar {
     -fx-min-height: 64px;
     -fx-pref-height: 64px;
@@ -327,10 +343,31 @@
    Thumbnails & Image Components
    ============================================================================ */
 
+/* Clickable thumbnail button in the Phase 3 grid; subclasses control border color */
 .thumbnail-button {
-    -fx-padding: 2px;
     -fx-cursor: hand;
+    -fx-border-style: solid;
+    -fx-border-radius: 4;
+    -fx-border-width: 4;
+    -fx-padding: 4;
 }
+
+/* Green border — applied when the image decision is "keep" */
+.thumbnail-button.thumbnail-keep {
+    -fx-border-color: -fx-color-keep;
+}
+
+/* Red border — applied when the image decision is "delete" */
+.thumbnail-button.thumbnail-delete {
+    -fx-border-color: -fx-color-delete;
+}
+
+/* Keyboard-focus indicator: wider border, reduced padding to keep outer size stable */
+.thumbnail-button.thumbnail-focused {
+    -fx-border-width: 6;
+    -fx-padding: 2;
+}
+/* Outer card container for Phase 1/2 image comparison display (ImageDisplayPane) */
 .image-display-pane {
     -fx-background-color: #454545;
     -fx-border-color: #545454;
@@ -339,36 +376,43 @@
     -fx-border-radius: 24px;
 }
 
+/* Image area at the top of the display card */
 .image-display-image-area {
     -fx-background-color: #2f2f2f;
     -fx-background-radius: 22px 22px 0 0;
     -fx-alignment: center;
 }
 
+/* Footer area of the display card, showing path and metadata labels */
 .image-display-footer {
     -fx-background-color: #454545;
     -fx-background-radius: 0 0 22px 22px;
     -fx-padding: 12px 18px 14px 18px;
 }
 
+/* Text labels in the image display card footer: path, metadata, and placeholder */
 .image-display-path,
 .image-display-meta,
 .image-display-placeholder {
     -fx-text-fill: #f4f4f4;
 }
 
+/* File path label — truncates with a leading ellipsis when the path is too long */
 .image-display-path {
     -fx-text-overrun: leading-ellipsis;
 }
 
+/* Metadata label (dimensions, file size) — right-aligned */
 .image-display-meta {
     -fx-alignment: center-right;
 }
 
+/* "No image" placeholder text shown when the image cannot be loaded */
 .image-display-placeholder {
     -fx-text-fill: #d3d3d3;
 }
 
+/* Placeholder fill for thumbnail buttons when the image cannot be loaded */
 .thumbnail-image-placeholder {
     -fx-fill: -fx-color-placeholder-bg;
 }
@@ -376,4 +420,18 @@
 /* ============================================================================
    Specific Component Overrides
    ============================================================================ */
+
+/* Dark overlay popup shown when right-clicking a thumbnail in Phase 3 */
+.image-preview-popup {
+    -fx-background-color: -fx-color-bg-surface;
+    -fx-border-color: -fx-color-border-dark;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+/* Background for the block-based progress bar canvas container */
+.block-progress-bar {
+    -fx-background-color: -fx-color-neutral;
+}
 

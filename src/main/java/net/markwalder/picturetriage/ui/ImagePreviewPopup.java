@@ -30,13 +30,7 @@ public class ImagePreviewPopup {
 
         // Dark background container matching the application color scheme
         StackPane container = new StackPane(imageView);
-        container.setStyle(
-            "-fx-background-color: #0f111a;" +
-            "-fx-border-color: #414760;" +
-            "-fx-border-width: 2;" +
-            "-fx-border-radius: 8;" +
-            "-fx-background-radius: 8;"
-        );
+        container.getStyleClass().add("image-preview-popup");
         container.setPadding(new Insets(PADDING));
 
         this.popup = new Popup();
