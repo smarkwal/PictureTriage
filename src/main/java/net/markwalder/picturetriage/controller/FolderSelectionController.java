@@ -40,7 +40,7 @@ public class FolderSelectionController {
         this.onScanCompleted = onScanCompleted;
 
         // Load the app icon at highest available resolution for crisp display on HiDPI screens
-        Image icon = new Image(getClass().getResourceAsStream("/icon_512.png"));
+        Image icon = new Image(getClass().getResourceAsStream("/icons/icon_512.png"));
         ImageView iconView = new ImageView(icon);
         iconView.setFitWidth(128);
         iconView.setFitHeight(128);

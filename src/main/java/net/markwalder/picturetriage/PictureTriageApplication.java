@@ -23,12 +23,12 @@ public class PictureTriageApplication extends Application {
 
         // Load and set application icons in multiple resolutions
         primaryStage.getIcons().addAll(
-                new Image(getClass().getResourceAsStream("/icon_16.png")),
-                new Image(getClass().getResourceAsStream("/icon_32.png")),
-                new Image(getClass().getResourceAsStream("/icon_64.png")),
-                new Image(getClass().getResourceAsStream("/icon_128.png")),
-                new Image(getClass().getResourceAsStream("/icon_256.png")),
-                new Image(getClass().getResourceAsStream("/icon_512.png"))
+                new Image(getClass().getResourceAsStream("/icons/icon_16.png")),
+                new Image(getClass().getResourceAsStream("/icons/icon_32.png")),
+                new Image(getClass().getResourceAsStream("/icons/icon_64.png")),
+                new Image(getClass().getResourceAsStream("/icons/icon_128.png")),
+                new Image(getClass().getResourceAsStream("/icons/icon_256.png")),
+                new Image(getClass().getResourceAsStream("/icons/icon_512.png"))
         );
 
         AppCoordinator coordinator = new AppCoordinator(primaryStage, getApplicationStylesheet());
@@ -48,7 +48,7 @@ public class PictureTriageApplication extends Application {
         if (!taskbar.isSupported(Taskbar.Feature.ICON_IMAGE)) {
             return;
         }
-        try (InputStream is = getClass().getResourceAsStream("/icon_512.png")) {
+        try (InputStream is = getClass().getResourceAsStream("/icons/icon_512.png")) {
             if (is != null) {
                 taskbar.setIconImage(ImageIO.read(is));
             }
