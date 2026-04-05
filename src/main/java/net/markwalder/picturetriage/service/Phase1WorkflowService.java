@@ -52,6 +52,23 @@ public class Phase1WorkflowService {
         }
     }
 
+    public boolean goBack() {
+        // Cannot go back if already at the first image
+        if (index <= 0) {
+            return false;
+        }
+        index--;
+        // Remove the last decision and undo its effect on the buckets
+        Phase1Decision lastDecision = decisionTimeline.remove(decisionTimeline.size() - 1);
+        ImageItem image = images.get(index);
+        switch (lastDecision) {
+            case KEEP -> kept.remove(image);
+            case TRIAGE -> triage.remove(image);
+            case DELETE -> deleted.remove(image);
+        }
+        return true;
+    }
+
     public boolean isComplete() {
         return index >= images.size();
     }

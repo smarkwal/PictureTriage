@@ -116,6 +116,7 @@ public class Phase1Controller {
                 case UP -> phase1Service.applyDecision(Phase1Decision.KEEP);
                 case RIGHT -> phase1Service.applyDecision(Phase1Decision.TRIAGE);
                 case DOWN -> phase1Service.applyDecision(Phase1Decision.DELETE);
+                case LEFT -> phase1Service.goBack();
                 default -> {
                     return;
                 }
