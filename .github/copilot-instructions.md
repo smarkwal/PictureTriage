@@ -64,6 +64,25 @@ See [java.instructions.md](instructions/java.instructions.md) — automatically 
 - **Adding a new phase**: Add a domain record for progress tracking, a workflow service, a controller, and wire the transition in the coordinator
 - **Formatting and imports**: Format Java code and optimize imports when editing any file
 
+## Commit Message Guidelines
+- Follow the pattern `<type>: <area>: <message>` where:
+  - `type` is one of `Feature`, `Bugfix`, `Change`, `Code`, `Docs`, `Tests`, `Project`
+    - Prefer `Feature`, `Bugfix`, `Change` for changes that affect the user experience; `Code`, `Docs`, `Tests`, `Project` for internal changes
+  - `area` is optional and describes the affected area (e.g., `UI`, `Folder Selection`, `Phase 2`, etc.)
+- Keep the message line under 120 characters
+- Start the message with a capital letter
+- Use present tense: "Add feature" not "Added feature"
+
+Examples:
+
+- `Feature: Phase 3: Highlight selected image with a white border`
+- `Bugfix: UI: Do not change window size when switching to another phase`
+- `Change: Workflow: Add a Back button to return to the previous phase`
+- `Code: Format code and optimize imports`
+- `Docs: Update README.d with new features`
+- `Tests: Add unit tests for the image scanner`
+- `Project: Add GitHub Actions workflow for CI`
+
 ## Debugging & Troubleshooting
 
 - **Compilation fails**: Ensure Java 25 JDK is installed and resolvable by Gradle toolchains
