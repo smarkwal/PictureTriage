@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- macOS squircle clip path -->
+    <clipPath id="squircle">
+      <path d="M 70,8 C 30,8 8,30 8,70 L 8,442 C 8,482 30,504 70,504 L 442,504 C 482,504 504,482 504,442 L 504,70 C 504,30 482,8 442,8 Z"/>
+    </clipPath>
+    <!-- Smoother squircle using superellipse approximation -->
+    <clipPath id="iconMask">
+      <rect x="8" y="8" width="496" height="496" rx="110" ry="110"/>
+    </clipPath>
+    <!-- Background gradient: dark violet top-left to black bottom-right -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3A1A5C"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <!-- Subtle inner glow -->
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.2)"/>
+      <stop offset="50%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+    <!-- Photo card shadow -->
+    <filter id="cardShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0a3040" flood-opacity="0.4"/>
+    </filter>
+    <!-- Check badge shadow -->
+    <filter id="badgeShadow" x="-20%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0a3040" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background squircle -->
+  <g clip-path="url(#iconMask)">
+    <rect x="8" y="8" width="496" height="496" fill="url(#bgGrad)"/>
+    <!-- Subtle texture / sheen -->
+    <rect x="8" y="8" width="496" height="496" fill="url(#sheen)"/>
+  </g>
+
+  <!-- Photo cards stack -->
+  <g clip-path="url(#iconMask)">
+
+    <!-- Back card (rotated left) - "delete" / faded -->
+    <g transform="translate(256, 270) rotate(-12) translate(-256, -270)" filter="url(#cardShadow)">
+      <rect x="110" y="120" width="200" height="260" rx="12" fill="#e8e8e8" opacity="0.5"/>
+      <!-- Landscape placeholder -->
+      <rect x="122" y="132" width="176" height="120" rx="6" fill="#909898" opacity="0.5"/>
+      <!-- Mountain silhouette -->
+      <polygon points="122,252 180,200 220,230 270,180 298,252" fill="#6A7878" opacity="0.5"/>
+    </g>
+
+    <!-- Middle card (centered, slight right tilt) - "triage" -->
+    <g transform="translate(256, 265) rotate(3) translate(-256, -265)" filter="url(#cardShadow)">
+      <rect x="165" y="100" width="210" height="280" rx="12" fill="#f0f0f0" opacity="0.75"/>
+      <!-- Image area -->
+      <rect x="178" y="114" width="184" height="130" rx="6" fill="#8A9E9E"/>
+      <!-- Mountain scene -->
+      <polygon points="178,244 230,190 265,215 320,170 362,244" fill="#5A7070"/>
+      <!-- Sun -->
+      <circle cx="330" cy="140" r="18" fill="#A8A090" opacity="0.8"/>
+    </g>
+
+    <!-- Front card (main, prominent) - "keep" -->
+    <g transform="translate(256, 260) rotate(0) translate(-256, -260)" filter="url(#cardShadow)">
+      <rect x="190" y="108" width="220" height="295" rx="14" fill="#ffffff"/>
+      <!-- Image area with muted scene -->
+      <rect x="204" y="122" width="192" height="145" rx="8" fill="#7A9EA0"/>
+      <!-- Mountain landscape -->
+      <polygon points="204,267 260,200 300,235 360,175 396,267" fill="#4A6E6E"/>
+      <!-- Smaller hill -->
+      <polygon points="204,267 240,240 280,267" fill="#567A7A"/>
+      <!-- Sun/light -->
+      <circle cx="230" cy="148" r="22" fill="#B8B090" opacity="0.85"/>
+      <!-- Bottom area (metadata hint) -->
+      <rect x="214" y="290" width="80" height="8" rx="4" fill="#d0d0d0"/>
+      <rect x="214" y="308" width="120" height="6" rx="3" fill="#e0e0e0"/>
+      <rect x="214" y="324" width="55" height="6" rx="3" fill="#e0e0e0"/>
+    </g>
+
+    <!-- Sorting buttons, vertically aligned -->
+    <g transform="translate(395, 150)">
+      <!-- Up arrow (keep) -->
+      <g filter="url(#badgeShadow)">
+        <circle cx="0" cy="0" r="55" fill="#4CAF6A"/>
+        <path d="M0,-24 L18,8 L7,8 L7,24 L-7,24 L-7,8 L-18,8 Z" fill="white" stroke="white" stroke-width="3" stroke-linejoin="round"/>
+      </g>
+    </g>
+    <g transform="translate(395, 270)">
+      <!-- Question mark (triage/review) -->
+      <g filter="url(#badgeShadow)">
+        <circle cx="0" cy="0" r="55" fill="#F0A030"/>
+        <text x="0" y="3" text-anchor="middle" dominant-baseline="middle" font-family="-apple-system, SF Pro, Helvetica" font-size="66" font-weight="800" fill="white">?</text>
+      </g>
+    </g>
+    <g transform="translate(395, 390)">
+      <!-- Down arrow (delete) -->
+      <g filter="url(#badgeShadow)">
+        <circle cx="0" cy="0" r="55" fill="#E05555"/>
+        <path d="M0,24 L18,-8 L7,-8 L7,-24 L-7,-24 L-7,-8 L-18,-8 Z" fill="white" stroke="white" stroke-width="3" stroke-linejoin="round"/>
+      </g>
+    </g>
+
+  </g>
+</svg>
