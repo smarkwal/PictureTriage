@@ -55,7 +55,6 @@ public class ImageScannerService {
         }
 
         @Override
-        @SuppressWarnings("unused")
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
             try {
                 if (isSupportedImage(file)) {
@@ -73,7 +72,6 @@ public class ImageScannerService {
         }
 
         @Override
-        @SuppressWarnings("unused")
         public FileVisitResult visitFileFailed(Path file, IOException exc) {
             // Log the error but continue scanning other files
             System.err.println("Failed to access: " + file + " - " + exc.getMessage());
@@ -82,7 +80,6 @@ public class ImageScannerService {
         }
 
         @Override
-        @SuppressWarnings("unused")
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
             try {
                 if (!Files.isReadable(dir)) {

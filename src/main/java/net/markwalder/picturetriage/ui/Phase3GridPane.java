@@ -9,7 +9,6 @@ import java.util.function.BiConsumer;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -35,8 +34,8 @@ public class Phase3GridPane extends VBox {
     private BiConsumer<ImageItem, Phase3Decision> onImageDecisionChanged;
     
     // Keyboard navigation state
-    private List<ImageItem> imageOrder = new ArrayList<>();
-    private Map<ImageItem, Integer> imageIndexMap = new HashMap<>();
+    private final List<ImageItem> imageOrder = new ArrayList<>();
+    private final Map<ImageItem, Integer> imageIndexMap = new HashMap<>();
     private int currentFocusIndex = 0;
     private int currentColumns = 1;
 
@@ -151,35 +150,42 @@ public class Phase3GridPane extends VBox {
         }
         
         boolean handled = false;
-        
-        if (event.getCode() == KeyCode.UP) {
-            // Move up one row (same column)
-            moveUp();
-            focusCurrentThumbnail();
-            handled = true;
-        } else if (event.getCode() == KeyCode.DOWN) {
-            // Move down one row (same column)
-            moveDown();
-            focusCurrentThumbnail();
-            handled = true;
-        } else if (event.getCode() == KeyCode.LEFT) {
-            // Move left within row
-            moveLeft();
-            focusCurrentThumbnail();
-            handled = true;
-        } else if (event.getCode() == KeyCode.RIGHT) {
-            // Move right within row
-            moveRight();
-            focusCurrentThumbnail();
-            handled = true;
-        } else if (event.getCode() == KeyCode.SPACE) {
-            // Toggle decision on current thumbnail
-            ImageItem currentImage = imageOrder.get(currentFocusIndex);
-            ImageThumbnailButton button = thumbnailMap.get(currentImage);
-            if (button != null) {
-                button.toggleDecision();
+
+        switch (event.getCode()) {
+            case UP -> {
+                // Move up one row (same column)
+                moveUp();
+                focusCurrentThumbnail();
                 handled = true;
             }
+            case DOWN -> {
+                // Move down one row (same column)
+                moveDown();
+                focusCurrentThumbnail();
+                handled = true;
+            }
+            case LEFT -> {
+                // Move left within row
+                moveLeft();
+                focusCurrentThumbnail();
+                handled = true;
+            }
+            case RIGHT -> {
+                // Move right within row
+                moveRight();
+                focusCurrentThumbnail();
+                handled = true;
+            }
+            case SPACE -> {
+                // Toggle decision on current thumbnail
+                ImageItem currentImage = imageOrder.get(currentFocusIndex);
+                ImageThumbnailButton button = thumbnailMap.get(currentImage);
+                if (button != null) {
+                    button.toggleDecision();
+                    handled = true;
+                }
+            }
+            default -> { }
         }
         
         if (handled) {

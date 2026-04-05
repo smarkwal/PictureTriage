@@ -51,12 +51,11 @@ public class ImageDeleteService {
         int deletedCount = 0;
         List<DeleteResult.FailedDeletion> failedDeletions = new ArrayList<>();
         Desktop desktop = getDesktopIfTrashSupported();
-        boolean trashSupported = desktop != null;
 
         for (ImageItem image : imagesToDelete) {
             Path path = image.path();
 
-            if (trashSupported) {
+            if (desktop != null) {
                 try {
                     boolean moved = desktop.moveToTrash(path.toFile());
                     if (moved) {

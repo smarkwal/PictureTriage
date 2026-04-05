@@ -10,15 +10,12 @@ import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-@SuppressWarnings("unused")
 public class PictureTriageApplication extends Application {
-    @SuppressWarnings("unused")
     public static void launchApp(String[] args) {
         launch(args);
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void start(Stage primaryStage) {
         // Set the macOS Dock icon (and other OS taskbar icons) programmatically.
         // This overrides the generic Java/Gradle icon when running via `./gradlew run`.
