@@ -15,6 +15,8 @@ import javax.imageio.ImageIO;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.image.Image;
@@ -31,6 +33,8 @@ public class ImageDisplayPane extends Region {
     private static final double IMAGE_AREA_PADDING = 20.0;
     private static final double FOOTER_HEIGHT = 74.0;
     private static final double BORDER_WIDTH = 2.0;
+    // Size of each checker square in pixels
+    private static final double CHECKER_SIZE = 16.0;
 
     private final ImageCache imageCache;
     private final Map<Path, ImageMetadata> metadataCache = new HashMap<>();
@@ -42,6 +46,7 @@ public class ImageDisplayPane extends Region {
 
     // Fields so layoutChildren() can position them directly
     private final Region card = new Region();
+    private final Canvas checkerCanvas = new Canvas();
     private final StackPane imageArea;
     private final VBox footer;
 
@@ -61,8 +66,11 @@ public class ImageDisplayPane extends Region {
         placeholderLabel.setVisible(false);
         placeholderLabel.setManaged(false);
 
+        // Canvas is positioned manually in layoutChildren(); exclude it from StackPane's layout pass
+        checkerCanvas.setManaged(false);
+
         // The image area size is computed in layoutChildren() to always be square
-        imageArea = new StackPane(imageView, placeholderLabel);
+        imageArea = new StackPane(checkerCanvas, imageView, placeholderLabel);
         imageArea.getStyleClass().add("image-display-image-area");
         imageArea.setPadding(new Insets(IMAGE_AREA_PADDING));
         imageArea.setAlignment(Pos.CENTER);
@@ -129,6 +137,56 @@ public class ImageDisplayPane extends Region {
         double natH = (currentImage != null) ? currentImage.getHeight() : 0;
         imageView.setFitWidth((natW > 0) ? Math.min(fitSize, natW) : fitSize);
         imageView.setFitHeight((natH > 0) ? Math.min(fitSize, natH) : fitSize);
+
+        // Update checkerboard canvas to match the rendered image size, indicating transparency
+        updateCheckerCanvas(currentImage, side, natW, natH);
+    }
+
+    /**
+     * Resize and reposition the checkerboard canvas to exactly cover the rendered image area.
+     * Uses the same no-upscale fit logic as the ImageView so their bounds align precisely.
+     */
+    private void updateCheckerCanvas(Image image, double side, double natW, double natH) {
+        if (image == null || natW <= 0 || natH <= 0) {
+            // No valid image: collapse canvas so it does not paint anything
+            checkerCanvas.setWidth(0);
+            checkerCanvas.setHeight(0);
+            return;
+        }
+        double fw = imageView.getFitWidth();
+        double fh = imageView.getFitHeight();
+        // Compute the rendered dimensions after preserve-ratio scaling
+        double scale = Math.min(fw / natW, fh / natH);
+        double renderedW = Math.max(1, natW * scale);
+        double renderedH = Math.max(1, natH * scale);
+        // Center the canvas within the image area to coincide with the ImageView rendering
+        checkerCanvas.setLayoutX(snapPositionX(side / 2.0 - renderedW / 2.0));
+        checkerCanvas.setLayoutY(snapPositionY(side / 2.0 - renderedH / 2.0));
+        checkerCanvas.setWidth(renderedW);
+        checkerCanvas.setHeight(renderedH);
+        drawCheckerboard(renderedW, renderedH);
+    }
+
+    /**
+     * Fill the checkerboard canvas with alternating dark/light tiles to indicate transparency.
+     */
+    private void drawCheckerboard(double width, double height) {
+        GraphicsContext gc = checkerCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, width, height);
+        int rows = (int) Math.ceil(height / CHECKER_SIZE);
+        int cols = (int) Math.ceil(width / CHECKER_SIZE);
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                // Alternate fill color so adjacent tiles differ
+                gc.setFill((row + col) % 2 == 0 ? AppColors.CHECKER_LIGHT : AppColors.CHECKER_DARK);
+                double rx = col * CHECKER_SIZE;
+                double ry = row * CHECKER_SIZE;
+                // Clip the last column/row to the exact image bounds
+                double rw = Math.min(CHECKER_SIZE, width - rx);
+                double rh = Math.min(CHECKER_SIZE, height - ry);
+                gc.fillRect(rx, ry, rw, rh);
+            }
+        }
     }
 
     @Override

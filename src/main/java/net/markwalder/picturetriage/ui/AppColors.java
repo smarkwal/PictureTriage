@@ -30,6 +30,12 @@ public final class AppColors {
     /** White, used for focus highlight borders on canvas-drawn blocks. */
     public static final Color HIGHLIGHT = Color.web("#ffffff");
 
+    /** Dark tile of the transparency checkerboard in {@link ImageDisplayPane}. */
+    public static final Color CHECKER_DARK = Color.web("#222222");
+
+    /** Light tile of the transparency checkerboard in {@link ImageDisplayPane}. */
+    public static final Color CHECKER_LIGHT = Color.web("#424242");
+
     private AppColors() {
     }
 }
