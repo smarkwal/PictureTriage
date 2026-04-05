@@ -50,7 +50,7 @@ The application follows a sequential, one-directional phase flow:
 
 ## Supported Image Formats
 
-JPG, JPEG, PNG, GIF, TIFF, BMP, WEBP (extension check is case-insensitive)
+JPG, JPEG, PNG, WEBP (extension check is case-insensitive)
 
 ## Code Style & Conventions
 
