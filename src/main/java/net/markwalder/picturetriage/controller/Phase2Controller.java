@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -63,6 +64,9 @@ public class Phase2Controller {
         ImageDisplayPane rightPane = new ImageDisplayPane(imageCache, selectedRootFolder);
         leftPane.setCursor(javafx.scene.Cursor.HAND);
         rightPane.setCursor(javafx.scene.Cursor.HAND);
+        // Align each card toward the center dividing line
+        leftPane.setCardAlignment(HPos.RIGHT);
+        rightPane.setCardAlignment(HPos.LEFT);
         int totalImageCount = phase1Result.keptImages().size()
             + phase1Result.rankedTriageImages().size()
             + phase1Result.deletedImages().size();

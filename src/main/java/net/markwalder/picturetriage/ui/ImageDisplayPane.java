@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -40,11 +41,14 @@ public class ImageDisplayPane extends Region {
     private final Label fileSizeLabel = new Label();
 
     // Fields so layoutChildren() can position them directly
+    private final Region card = new Region();
     private final StackPane imageArea;
     private final VBox footer;
 
     private final Path displayRoot;
     private ImageItem imageItem;
+    // Controls horizontal placement of the card within the allocated pane bounds
+    private HPos cardAlignment = HPos.CENTER;
 
     public ImageDisplayPane(ImageCache imageCache, Path displayRoot) {
         this.imageCache = imageCache;
@@ -81,8 +85,10 @@ public class ImageDisplayPane extends Region {
         footer = new VBox(4, firstRow, secondRow);
         footer.getStyleClass().add("image-display-footer");
 
-        getChildren().addAll(imageArea, footer);
-        getStyleClass().add("image-display-pane");
+        // card is the visual background/border layer; it is sized in layoutChildren() to the computed square
+        card.getStyleClass().add("image-display-pane");
+
+        getChildren().addAll(card, imageArea, footer);
 
         // Allow this pane to grow to fill the space allocated by its parent
         setMaxWidth(Double.MAX_VALUE);
@@ -95,17 +101,38 @@ public class ImageDisplayPane extends Region {
         double h = snapSizeY(getHeight());
         double footerH = snapSizeY(FOOTER_HEIGHT);
 
-        // Image area fills the full width; its height is capped to maintain a 1:1 image square inside
-        double side = snapSizeY(Math.max(0, Math.min(w, h - footerH)));
+        // 1. maxImageAreaHeight = maxPaneHeight - footerHeight
+        double maxImageAreaHeight = h - footerH;
+        // 2. maxImageAreaWidth = maxPaneWidth
+        double maxImageAreaWidth = w;
+        // 3. imageAreaWidth = imageAreaHeight = min(maxImageAreaWidth, maxImageAreaHeight)
+        double side = snapSizeX(Math.max(0, Math.min(maxImageAreaWidth, maxImageAreaHeight)));
 
-        // The image area spans full width but only as tall as the square side
-        imageArea.resizeRelocate(0, 0, w, side);
-        footer.resizeRelocate(0, side, w, footerH);
+        // Compute x based on the requested card alignment
+        double x = switch (cardAlignment) {
+            case LEFT -> 0;
+            case RIGHT -> snapPositionX(w - side);
+            default -> snapPositionX((w - side) / 2.0);
+        };
 
-        // The ImageView fit size stays square, centered within the full-width image area
+        // Visual card background/border is sized to the card area only (not the full pane bounds)
+        card.resizeRelocate(x, 0, side, side + footerH);
+        // Image area occupies the square portion of the card
+        imageArea.resizeRelocate(x, 0, side, side);
+        // Footer sits directly below the image area
+        footer.resizeRelocate(x, side, side, footerH);
+
+        // ImageView fit size stays square, centered within the image area padding
         double fitSize = Math.max(0, side - (IMAGE_AREA_PADDING * 2) - (BORDER_WIDTH * 2));
         imageView.setFitWidth(fitSize);
         imageView.setFitHeight(fitSize);
+    }
+
+    @Override
+    protected double computePrefWidth(double height) {
+        // Return 0 so that parents (e.g. HBox) use growth constraints alone to distribute space,
+        // preventing image pixel dimensions from influencing the layout baseline.
+        return 0;
     }
 
     @Override
@@ -116,6 +143,11 @@ public class ImageDisplayPane extends Region {
     @Override
     protected double computeMinHeight(double width) {
         return FOOTER_HEIGHT + 50;
+    }
+
+    public void setCardAlignment(HPos alignment) {
+        this.cardAlignment = alignment;
+        requestLayout();
     }
 
     public void setImageItem(ImageItem imageItem) {
