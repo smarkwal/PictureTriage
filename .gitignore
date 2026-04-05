@@ -1,5 +1,7 @@
-# Visual Studio
-/.vscode
+# Visual Studio Code — ignore personal settings, but track shared config
+/.vscode/*
+!/.vscode/settings.json
+!/.vscode/mcp.json
 
 # Gradle
 /.gradle

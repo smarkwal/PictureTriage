@@ -1,0 +1,8 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    // application.css uses JavaFX CSS (-fx-* properties), not browser CSS.
+    // VS Code's CSS linter incorrectly treats -fx-* as vendor-prefixed browser
+    // properties and warns about missing standard counterparts. This suppresses
+    // those false positives.
+    "css.lint.vendorPrefix": "ignore"
+}
