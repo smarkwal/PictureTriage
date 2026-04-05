@@ -59,9 +59,9 @@ public class AppCoordinator {
         stage.setOnCloseRequest(event -> {
             imageCache.clear();
         });
-        // Set initial window size to 80% of the primary screen's usable area
-        stage.setWidth(WINDOW_WIDTH);
-        stage.setHeight(WINDOW_HEIGHT);
+        // Set initial window size to a fixed compact size for folder selection
+        stage.setWidth(800);
+        stage.setHeight(600);
         showFolderSelection();
         // Center the window on the primary screen before displaying
         stage.centerOnScreen();
@@ -75,6 +75,10 @@ public class AppCoordinator {
     private void onFolderScanCompleted(FolderSelectionController.FolderScanResult result) {
         selectedRootFolder = result.selectedFolder();
         scannedImages = result.images();
+        // Expand window to 80% of the primary screen's usable area before entering Phase 1
+        stage.setWidth(WINDOW_WIDTH);
+        stage.setHeight(WINDOW_HEIGHT);
+        stage.centerOnScreen();
         phase1Controller.start(result.images(), selectedRootFolder, this::onPhase1Completed, this::backToPhase1Start);
     }
 
