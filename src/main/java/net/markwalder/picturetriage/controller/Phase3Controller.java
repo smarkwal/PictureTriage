@@ -24,8 +24,6 @@ import net.markwalder.picturetriage.ui.PhaseLayoutContainer;
 public class Phase3Controller {
     private final Stage stage;
     private final String styleSheet;
-    private final double windowWidth;
-    private final double windowHeight;
     private final ImageCache imageCache;
 
     private Phase3WorkflowService phase3Service;
@@ -35,14 +33,10 @@ public class Phase3Controller {
     public Phase3Controller(
         Stage stage,
         String styleSheet,
-        double windowWidth,
-        double windowHeight,
         ImageCache imageCache
     ) {
         this.stage = stage;
         this.styleSheet = styleSheet;
-        this.windowWidth = windowWidth;
-        this.windowHeight = windowHeight;
         this.imageCache = imageCache;
     }
 
@@ -104,7 +98,7 @@ public class Phase3Controller {
             List.of(finishButton)
         );
 
-        Scene scene = new Scene(root, windowWidth, windowHeight);
+        Scene scene = new Scene(root);
         scene.getStylesheets().add(styleSheet);
 
         scene.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {

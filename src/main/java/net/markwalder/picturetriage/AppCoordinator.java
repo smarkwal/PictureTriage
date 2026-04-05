@@ -3,11 +3,13 @@ package net.markwalder.picturetriage;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import net.markwalder.picturetriage.controller.FolderSelectionController;
 import net.markwalder.picturetriage.controller.Phase1Controller;
@@ -23,8 +25,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class AppCoordinator {
-    private static final double WINDOW_WIDTH = 1200;
-    private static final double WINDOW_HEIGHT = 820;
+    private final double WINDOW_WIDTH;
+    private final double WINDOW_HEIGHT;
 
     private final Stage stage;
     private final String styleSheet;
@@ -38,12 +40,17 @@ public class AppCoordinator {
     private List<ImageItem> scannedImages;
 
     public AppCoordinator(Stage stage, String styleSheet) {
+        // Compute window size as 80% of the primary screen's usable area
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        WINDOW_WIDTH = screenBounds.getWidth() * 0.8;
+        WINDOW_HEIGHT = screenBounds.getHeight() * 0.8;
+
         this.stage = stage;
         this.styleSheet = styleSheet;
-        this.folderSelectionController = new FolderSelectionController(stage, styleSheet, WINDOW_WIDTH, WINDOW_HEIGHT);
-        this.phase1Controller = new Phase1Controller(stage, styleSheet, WINDOW_WIDTH, WINDOW_HEIGHT, imageCache);
-        this.phase2Controller = new Phase2Controller(stage, styleSheet, WINDOW_WIDTH, WINDOW_HEIGHT, imageCache);
-        this.phase3Controller = new Phase3Controller(stage, styleSheet, WINDOW_WIDTH, WINDOW_HEIGHT, imageCache);
+        this.folderSelectionController = new FolderSelectionController(stage, styleSheet);
+        this.phase1Controller = new Phase1Controller(stage, styleSheet, imageCache);
+        this.phase2Controller = new Phase2Controller(stage, styleSheet, imageCache);
+        this.phase3Controller = new Phase3Controller(stage, styleSheet, imageCache);
     }
 
     public void begin() {
@@ -52,7 +59,12 @@ public class AppCoordinator {
         stage.setOnCloseRequest(event -> {
             imageCache.clear();
         });
+        // Set initial window size to 80% of the primary screen's usable area
+        stage.setWidth(WINDOW_WIDTH);
+        stage.setHeight(WINDOW_HEIGHT);
         showFolderSelection();
+        // Center the window on the primary screen before displaying
+        stage.centerOnScreen();
         stage.show();
     }
 
@@ -153,7 +165,7 @@ public class AppCoordinator {
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(32));
         
-        Scene scene = new Scene(content, WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(content);
         scene.getStylesheets().add(styleSheet);
         stage.setScene(scene);
     }

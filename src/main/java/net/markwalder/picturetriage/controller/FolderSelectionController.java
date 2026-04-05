@@ -21,22 +21,16 @@ import java.util.function.Consumer;
 public class FolderSelectionController {
     private final Stage stage;
     private final String styleSheet;
-    private final double windowWidth;
-    private final double windowHeight;
     private final ImageScannerService scannerService;
 
     private Consumer<FolderScanResult> onScanCompleted;
 
     public FolderSelectionController(
         Stage stage,
-        String styleSheet,
-        double windowWidth,
-        double windowHeight
+        String styleSheet
     ) {
         this.stage = stage;
         this.styleSheet = styleSheet;
-        this.windowWidth = windowWidth;
-        this.windowHeight = windowHeight;
         this.scannerService = new ImageScannerService();
     }
 
@@ -55,7 +49,7 @@ public class FolderSelectionController {
         root.setPadding(new Insets(24));
         root.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(root, windowWidth, windowHeight);
+        Scene scene = new Scene(root);
         scene.getStylesheets().add(styleSheet);
         stage.setScene(scene);
     }
@@ -123,7 +117,7 @@ public class FolderSelectionController {
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(32));
 
-        Scene scene = new Scene(content, windowWidth, windowHeight);
+        Scene scene = new Scene(content);
         scene.getStylesheets().add(styleSheet);
         stage.setScene(scene);
     }
