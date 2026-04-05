@@ -343,29 +343,19 @@
    Thumbnails & Image Components
    ============================================================================ */
 
-/* Clickable thumbnail button in the Phase 3 grid; subclasses control border color */
+/* Clickable thumbnail button in the Phase 3 grid; transparent border keeps layout stable */
 .thumbnail-button {
     -fx-cursor: hand;
     -fx-border-style: solid;
     -fx-border-radius: 4;
     -fx-border-width: 4;
     -fx-padding: 4;
+    -fx-border-color: transparent;
 }
 
-/* Green border — applied when the image decision is "keep" */
-.thumbnail-button.thumbnail-keep {
-    -fx-border-color: -fx-color-keep;
-}
-
-/* Red border — applied when the image decision is "delete" */
-.thumbnail-button.thumbnail-delete {
-    -fx-border-color: -fx-color-delete;
-}
-
-/* Keyboard-focus indicator: wider border, reduced padding to keep outer size stable */
+/* Keyboard-focus indicator: white border on the currently selected thumbnail */
 .thumbnail-button.thumbnail-focused {
-    -fx-border-width: 6;
-    -fx-padding: 2;
+    -fx-border-color: white;
 }
 /* Outer card container for Phase 1/2 image comparison display (ImageDisplayPane) */
 .image-display-pane {
